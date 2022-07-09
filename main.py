@@ -56,6 +56,8 @@ class Wall:
 
         blank_map = np.ones((MAX_X+1, MAX_Y+1))
         blank_map[1:-1, 1:-1] = 0
+        blank_map[4:-4, MAX_Y // 3] = 1
+        blank_map[4:-4, -MAX_Y // 3] = 1
         walls_x, walls_y = np.nonzero(blank_map)
         walls_y *= SIZE
         walls_x *= SIZE
@@ -152,6 +154,7 @@ class Game:
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE)
         self.snake.draw()
         self.apple = Apple(self.surface)
+        self.apple_valid = 0
         self.apple.draw()
         self.wall = Wall(self.surface)
         self.render_background()
@@ -249,14 +252,15 @@ class Game:
             self.play_sound('ding')
             self.snake.increase_length()
             self.apple_valid = False
-            while not self.apple_valid: # move apple until it's not placed inside snake
+            while not self.apple_valid:  # move apple until it's not placed inside snake
                 self.apple.move()
                 self.apple_valid = self.is_apple_valid()
 
     def is_apple_valid(self):
         for i in range(self.snake.length):
             if (self.apple.x == self.snake.x[i]) & (self.apple.y == self.snake.y[i]):  # if apple is inside snake
-                return False
+                if (self.apple.x, self.apple.y) in self.wall.walls:  # if apple is inside the walls
+                    return False
         return True
 
     def is_game_over(self):
@@ -269,8 +273,7 @@ class Game:
             self.play_sound("crash")
             raise "Hit The Boundaries"
 
-
-        for square in self.wall.walls: # if collision with walls
+        for square in self.wall.walls:  # if collision with walls
            if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
