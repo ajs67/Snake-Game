@@ -28,6 +28,7 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 import pygame
 from pygame.locals import *
 import random as r
+import numpy as np
 
 SIZE = 40  # block image file is 40 x 40 pixels
 BACKGROUND_COLOR = (0x16, 0x36, 0x93)
@@ -54,15 +55,17 @@ class Wall:
         self.walls_y = []
 
     def draw(self):
-        walls_x = [(x * SIZE, 0 * SIZE) for x in range(MAX_X + 1)]  # top
-        walls_x += [(x * SIZE, MAX_Y * SIZE) for x in range(MAX_X + 1)]  # bottom
-        walls_y = [(0 * SIZE, y * SIZE) for y in range(MAX_Y + 1)]  # left
-        walls_y += [(MAX_X * SIZE, y * SIZE) for y in range(MAX_Y + 1)]  # right
-        self.walls = walls_x + walls_y
 
-        for current_pos in self.walls:  # [(SIZE * 0, SIZE * 0), (SIZE * 0, SIZE * 1), (SIZE * 0, SIZE * 2)]:
-            self.parent_screen.blit(self.wall, current_pos)  # draw wall block image
+        blank_map = np.ones((MAX_X+1, MAX_Y+1))
+        blank_map[1:-1, 1:-1] = 0
+        blank_map[3, 3:-3] = 1
+        walls_x, walls_y = np.nonzero(blank_map)
+        walls_y *= SIZE
+        walls_x *= SIZE
+        self.walls = list(zip(walls_x,walls_y))
 
+        for current_pos in self.walls:
+            self.parent_screen.blit(self.wall, current_pos) # draw wall block image
 
 
 class Apple:
