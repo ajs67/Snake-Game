@@ -51,14 +51,11 @@ class Wall:
         self.x = [SIZE]
         self.y = [SIZE]
         self.walls = []
-        self.walls_x = []
-        self.walls_y = []
 
     def draw(self):
 
         blank_map = np.ones((MAX_X+1, MAX_Y+1))
         blank_map[1:-1, 1:-1] = 0
-        blank_map[3, 3:-3] = 1
         walls_x, walls_y = np.nonzero(blank_map)
         walls_y *= SIZE
         walls_x *= SIZE
@@ -272,12 +269,12 @@ class Game:
             self.play_sound("crash")
             raise "Hit The Boundaries"
 
-        ''' # WIP making walls for different maps
+
         for square in self.wall.walls: # if collision with walls
            if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
-        '''
+
     def menu(self):
         self.render_background()
         font = pygame.font.SysFont('arial', 50)
