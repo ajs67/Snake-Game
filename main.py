@@ -32,7 +32,7 @@ import numpy as np
 
 SIZE = 40  # block image file is 40 x 40 pixels
 BACKGROUND_COLOR = (0x16, 0x36, 0x93)
-WALL_COLOR = (0, 0, 0)
+BLACK = (0, 0, 0)
 WHITE = (255,255,255)
 # corners  => (0,0), (24,0), (0,19), (24,19)
 MAX_X = 24
@@ -107,8 +107,8 @@ class Apple:
         self.x = r.randint(1, 23) * SIZE
         self.y = r.randint(1, 18) * SIZE
 
-    def draw(self):
-        self.parent_screen.blit(self.image, (self.x, self.y))  # draw apple
+    def draw(self):  # draw apple
+        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1)) # + 1 to position so it doesn't cover grid
 
 
 class Snake:
@@ -129,13 +129,13 @@ class Snake:
         self.y.append(-1)
 
     def draw(self):
-        self.parent_screen.blit(self.head_block, (self.x[0], self.y[0]))  # draw head
+        self.parent_screen.blit(self.head_block, (self.x[0] + 1, self.y[0] + 1))  # draw head + 1 to not cover the grid
         for i in range(1, self.length - 1, 2): # every other normal
             if self.direction == 'left' or self.direction == 'right':  # WIP change block image to show shape of snake
                 self.parent_screen.blit(self.x_block, (self.x[i], self.y[i]))
             else:
                 self.parent_screen.blit(self.x_block, (self.x[i], self.y[i]))
-        for i in range(2, self.length - 1, 2): # every other black
+        for i in range(2, self.length - 1, 2): # every other block
             if self.direction == 'left' or self.direction == 'right':  # WIP change block image to show shape of snake
                 self.parent_screen.blit(self.y_block, (self.x[i], self.y[i]))
             else:
@@ -249,7 +249,7 @@ class Game:
         for x in range(0, WINDOW_WIDTH, SIZE):
             for y in range(0, WINDOW_WIDTH, SIZE):
                 rect = pygame.Rect(x, y, block_size, block_size)
-                pygame.draw.rect(self.surface, WALL_COLOR, rect, 1)
+                pygame.draw.rect(self.surface, BLACK, rect, 1)
 
     def render_background(self):
         bg = pygame.image.load("resources/background.jpg")
@@ -321,12 +321,13 @@ class Game:
             raise "You WON!!!"
 
     def menu(self):
-        self.render_background()
-        font = pygame.font.SysFont('arial', 50)
-        title = font.render(f"SNAKE", True, WHITE)
-        self.surface.blit(title, (400, 200))
-        author = font.render(f"by Alexander Schwartz", True, WHITE)
-        self.surface.blit(author, (280, 250))
+        bg_menu = pygame.image.load("resources/menu.jpg")
+        self.surface.blit(bg_menu, (0, 0))
+        font = pygame.font.SysFont('arial', 50, bold=True)
+        title = font.render(f"SNAKE", True, BLACK)
+        self.surface.blit(title, (400, 150))
+        author = font.render(f"by Alexander Schwartz", True, BLACK)
+        self.surface.blit(author, (280, 200))
         font = pygame.font.SysFont('arial', 30)
         tag_line = font.render(f"Choose your difficulty", True, WHITE)
         self.surface.blit(tag_line, (360, 350))
