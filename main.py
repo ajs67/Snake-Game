@@ -14,8 +14,6 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # fix snake shape, so it is a clear path from head to tail
 # make snake movement smoother
 # improve snake block images
-# add map selection to main menu
-# add different maps
 # add map import using a txt file -- so map is loaded from a file, any new map can easily be added and used.
 # add mouse interface in menu
 # save high score stat for next time application is opened
@@ -62,21 +60,35 @@ class Wall:
         test_map[0:MAX_X, 0:MAX_Y // 3 + 3] = 1
         return test_map
 
-    def draw(self):
+    def blank_map(self):
 
-        blank_map = np.ones((MAX_X+1, MAX_Y+1))
-        blank_map[1:-1, 1:-1] = 0
-        blank_map[4:-4, MAX_Y // 3] = 1
-        blank_map[4:-4, -MAX_Y // 3 - 1] = 1
+        map = np.ones((MAX_X+1, MAX_Y+1))
+        map[1:-1, 1:-1] = 0
+        return map
 
-        debug_map = 0
-        if debug_map == 1:
-            blank_map = self.map_test()
+    def horizontal_map(self):
 
-        walls_x, walls_y = np.nonzero(blank_map)
+        map = np.ones((MAX_X+1, MAX_Y+1))
+        map[1:-1, 1:-1] = 0
+        map[4:-4, MAX_Y // 3] = 1
+        map[4:-4, -MAX_Y // 3 - 1] = 1
+        return map
+
+    def build_map(self, map_blueprint):
+        walls_x, walls_y = np.nonzero(map_blueprint)
         walls_y *= SIZE
         walls_x *= SIZE
         self.walls = list(zip(walls_x,walls_y))
+
+    def draw(self,selected_map):
+        if selected_map == 0:
+            current_map = self.blank_map()
+        elif selected_map == 1:
+            current_map = self.horizontal_map()
+        else:
+            current_map = self.map_test()
+
+        self.build_map(current_map)
 
         for current_pos in self.walls:
             self.parent_screen.blit(self.wall, current_pos) # draw wall block image
@@ -100,7 +112,7 @@ class Apple:
 class Snake:
     def __init__(self, parent_screen, length):
         self.x_block = pygame.image.load("resources/x_block.jpg").convert()
-        self.y_block = pygame.image.load("resources/wall.jpg").convert()
+        self.y_block = pygame.image.load("resources/snake_block_2.jpg").convert()
         self.head_block = pygame.image.load("resources/head_block2.jpg").convert()
         self.tail_block = pygame.image.load("resources/tail_block.jpg").convert()
         self.x = [SIZE * 5] * length
@@ -169,7 +181,8 @@ class Game:
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE)
         self.snake.draw()
         self.wall = Wall(self.surface)
-        self.wall.draw()
+        self.current_map = 0
+        self.wall.draw(self.current_map)
         self.apple = Apple(self.surface)
         self.apple_valid = False
         self.valid_apple_move()
@@ -258,7 +271,7 @@ class Game:
         else:
             self.snake.draw()
         self.apple.draw()
-        self.wall.draw()
+        self.wall.draw(self.current_map)
         self.display_score()
         pygame.display.update()
 
@@ -315,8 +328,10 @@ class Game:
         self.surface.blit(speeds, (240, 400))
         line2 = font.render("To Play, press Enter or press a number to choose your speed.", True, WHITE)
         self.surface.blit(line2, (160, 500))
+        exit_line = font.render("Press A to switch the map", True, WHITE)
+        self.surface.blit(exit_line, (360, 550))
         exit_line = font.render("To Exit, press Escape. Press M to Mute Music.", True, WHITE)
-        self.surface.blit(exit_line, (240, 550))
+        self.surface.blit(exit_line, (240, 600))
         footer = font.render('Programmed using python and pygame library by Alexander Schwartz "Just for fun"', True, WHITE)
         self.surface.blit(footer, (40, 750))
         self.display_score()
@@ -375,6 +390,13 @@ class Game:
                         elif event.key == K_MINUS: # Hidden lower speed function
                             if clock_speed > 1:
                                 clock_speed -= 1
+                        elif event.key == K_a:
+                            self.current_map += 1
+                            if self.current_map == 5:
+                                self.current_map = 0
+                            self.wall.draw(self.current_map)
+
+
 
                     else:
 
