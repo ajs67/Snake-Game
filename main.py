@@ -22,6 +22,7 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # fix main menu overwriting game over screen when pressing directional buttons
 # add paused text when game is paused during gameplay
 # fix game win crash
+# develop AI snake that can win the game every time in the shortest amount of time possible
 
 
 import pygame
@@ -36,6 +37,7 @@ WHITE = (255,255,255)
 # corners  => (0,0), (24,0), (0,19), (24,19)
 MAX_X = 24
 MAX_Y = 19
+MAX_AREA = (MAX_Y + 1) * (MAX_X + 1)
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 800
 REFRESH_RATE = 0
@@ -313,6 +315,10 @@ class Game:
            if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
+        if self.snake.length - 2 >= (MAX_AREA - len(self.wall.walls)): # WIP fix game win crash
+            self.play_sound("ding")
+            print("You WON!!!")
+            raise "You WON!!!"
 
     def menu(self):
         self.render_background()
