@@ -26,11 +26,14 @@ A = Change Maps (in menu only)
 
 +/- = change speed incrementally
 
+---------------------------------------------------
+
 In game controls:
 
 M = Mute Music
 
 Directional keys = Control the snake.
+
 ---------------------------------------------------
 
 You increase your score by eating more apples, as you eat more apples, the snake becomes longer.

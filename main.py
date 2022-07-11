@@ -20,7 +20,6 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # add 2 player support
 # host application online, save a record of high score of all players
 # fix main menu overwriting game over screen when pressing directional buttons
-# add paused text when game is paused during gameplay
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
 
@@ -178,6 +177,7 @@ class Game:
 
         pygame.mixer.init()
         self.play_bg_music()
+        self.clock_speed = MEDIUM_SPEED # default medium
 
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE)
@@ -234,7 +234,6 @@ class Game:
         self.apple = Apple(self.surface)
         self.apple_valid = 0
         self.valid_apple_move()
-        self.toggle_music()
 
     def play_sound(self, sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
@@ -344,14 +343,23 @@ class Game:
         self.display_score()
         pygame.display.update()
 
+    def pause_game(self):
+        font = pygame.font.SysFont('arial', 50, bold=True)
+        title = font.render(f"PAUSED", True, WHITE)
+        self.surface.blit(title, (400, 400))
+        pygame.display.update()
+
+    def change_speed_reset(self, speed):
+        self.clock_speed = speed
+        self.reset()
+
     def run(self):
         running = True
         pause = True
         clock = pygame.time.Clock()
-        clock_speed = MEDIUM_SPEED # default medium
 
         while running:
-            clock.tick(clock_speed)
+            clock.tick(self.clock_speed)
 
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
@@ -363,60 +371,47 @@ class Game:
 
                     if event.key == K_RETURN:
                         if pause == True:
-                            self.toggle_music()
                             pause = False
                         else:
-                            self.toggle_music()
                             pause = True
+                            self.pause_game()
 
                     if pause:
-                        self.menu()
-                        self.toggle_music()
                         if event.key == K_1:
-                            clock_speed = 5
+                            self.change_speed_reset(5)
                             pause = False
-                            self.toggle_music()
-                            self.reset()
                         elif event.key == K_2:
-                            clock_speed = MEDIUM_SPEED
+                            self.change_speed_reset(MEDIUM_SPEED)
                             pause = False
-                            self.toggle_music()
-                            self.reset()
                         elif event.key == K_3:
-                            clock_speed = 13
+                            self.change_speed_reset(13)
                             pause = False
-                            self.toggle_music()
-                            self.reset()
                         elif event.key == K_0:
-                            clock_speed = 20
+                            self.change_speed_reset(20)
                             pause = False
-                            self.toggle_music()
-                            self.reset()
                         elif event.key == K_EQUALS: # Hidden increase speed function
-                            clock_speed += 1
+                            self.clock_speed += 1
                         elif event.key == K_MINUS: # Hidden lower speed function
-                            if clock_speed > 1:
-                                clock_speed -= 1
+                            if self.clock_speed > 1:
+                                self.clock_speed -= 1
                         elif event.key == K_a:
                             self.current_map += 1
-                            if self.current_map == 5:
+                            if self.current_map == 2:
                                 self.current_map = 0
                             self.wall.draw(self.current_map)
 
-
-
                     else:
 
-                        if (event.key == K_UP) & (self.snake.direction != 'down') & (self.change_direction == False):
+                        if (event.key == K_UP) & (self.snake.direction != 'down') & (not self.change_direction):
                             self.snake.move_up()
                             self.change_direction = True
-                        elif (event.key == K_DOWN) & (self.snake.direction != 'up') & (self.change_direction == False):
+                        elif (event.key == K_DOWN) & (self.snake.direction != 'up') & (not self.change_direction):
                             self.snake.move_down()
                             self.change_direction = True
-                        elif (event.key == K_LEFT) & (self.snake.direction != 'right') & (self.change_direction == False):
+                        elif (event.key == K_LEFT) & (self.snake.direction != 'right') & (not self.change_direction):
                             self.snake.move_left()
                             self.change_direction = True
-                        elif (event.key == K_RIGHT) & (self.snake.direction != 'left') & (self.change_direction == False):
+                        elif (event.key == K_RIGHT) & (self.snake.direction != 'left') & (not self.change_direction):
                             self.snake.move_right()
                             self.change_direction = True
 
