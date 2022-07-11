@@ -13,21 +13,25 @@ I am working towards launching this game as a scalable web app online to support
 This is one of my favorite games so it's exciting I have a lot of fun with it!
 ---------------------------------------------------
 
+Menu Controls:
 
 Choose your difficulty:
 1 = Slow   2 = Medium   3 = Fast   0 = Impossible.
 
-To Play, press Enter or press a number to choose your speed.
+Enter = Play/Pause/Resume Game
 
-To Exit, press Escape.
+Escape = Exit Game
 
-To mute music, press M.
+A = Change Maps (in menu only)
 
-Press A to change maps.
++/- = change speed incrementally
 
-Also you can increase or decrease the speed incrementally by pressing + or - while in the menu.
+In game controls:
 
-Use the arrow keys to control the snake.
+M = Mute Music
+
+Directional keys = Control the snake.
+---------------------------------------------------
 
 You increase your score by eating more apples, as you eat more apples, the snake becomes longer.
 
