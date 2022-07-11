@@ -1,6 +1,7 @@
 # Snake-Game by Alexander Schwartz
 
 Snake: Programmed by Alexander Schwartz
+---------------------------------------------------
 
 
 Based on the classic Snake game, this application was designed in python using Pygame and NumPy libraries.
@@ -10,10 +11,12 @@ Developed with object-oriented programming (OOP), it relies on both event handli
 I am working towards launching this game as a scalable web app online to support multiplayer competitions.
 
 This is one of my favorite games so it's exciting I have a lot of fun with it!
+---------------------------------------------------
 
 
 Choose your difficulty:
-1 = Slow   2 = Medium   3 = Fast   0 = Impossible
+1 = Slow   2 = Medium   3 = Fast   0 = Impossible.
+
 To Play, press Enter or press a number to choose your speed.
 
 To Exit, press Escape.
@@ -24,5 +27,15 @@ Press A to change maps.
 
 Also you can increase or decrease the speed incrementally by pressing + or - while in the menu.
 
+Use the arrow keys to control the snake.
+
+You increase your score by eating more apples, as you eat more apples, the snake becomes longer.
+
+Good Luck, and have fun!
+---------------------------------------------------
+
 
 Programmed using python and pygame library by Alexander Schwartz "Just for fun"
+
+
+![Snake Gameplay](/Snake_Game/resources/snake_gameplay.jpg "Snake Gameplay")
