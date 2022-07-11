@@ -38,4 +38,4 @@ Good Luck, and have fun!
 Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 
 
-![Snake Gameplay](/Snake_Game/resources/snake_gameplay.jpg "Snake Gameplay")
+![Snake Gameplay](/resources/snake_gameplay.jpg "Snake Gameplay")
