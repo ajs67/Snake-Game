@@ -18,7 +18,6 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # add mouse interface in menu
 # add 2 player support
 # host application online, save a record of high score of all players
-# fix main menu overwriting game over screen when pressing directional buttons
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
 
@@ -62,18 +61,23 @@ class Wall:
         return test_map
 
     def blank_map(self):
-
-        map = np.ones((MAX_X+1, MAX_Y+1))
-        map[1:-1, 1:-1] = 0
-        return map
+        map_walls = np.ones((MAX_X+1, MAX_Y+1))
+        map_walls[1:-1, 1:-1] = 0
+        return map_walls
 
     def horizontal_map(self):
+        map_walls = np.ones((MAX_X+1, MAX_Y+1))
+        map_walls[1:-1, 1:-1] = 0
+        map_walls[4:-4, MAX_Y // 3] = 1
+        map_walls[4:-4, -MAX_Y // 3 - 1] = 1
+        return map_walls
 
-        map = np.ones((MAX_X+1, MAX_Y+1))
-        map[1:-1, 1:-1] = 0
-        map[4:-4, MAX_Y // 3] = 1
-        map[4:-4, -MAX_Y // 3 - 1] = 1
-        return map
+    def vertical_map(self):
+        map_walls = np.ones((MAX_X+1, MAX_Y+1))
+        map_walls[1:-1, 1:-1] = 0
+        map_walls[4:-4, MAX_Y // 3] = 1
+        map_walls[4:-4, -MAX_Y // 3 - 1] = 1
+        return map_walls
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
@@ -82,13 +86,8 @@ class Wall:
         self.walls = list(zip(walls_x,walls_y))
 
     def draw(self,selected_map):
-        if selected_map == 0:
-            current_map = self.blank_map()
-        elif selected_map == 1:
-            current_map = self.horizontal_map()
-        else:
-            current_map = self.map_test()
-
+        map_dict = {0: self.blank_map(), 1: self.horizontal_map(), 2: self.vertical_map(), 3: self.map_test()}
+        current_map = map_dict.get(selected_map)
         self.build_map(current_map)
 
         for current_pos in self.walls:
