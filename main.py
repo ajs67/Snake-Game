@@ -28,6 +28,7 @@ import pygame
 from pygame.locals import *
 import random as r
 import numpy as np
+import os
 
 SIZE = 40  # block image file is 40 x 40 pixels
 BACKGROUND_COLOR = (0x16, 0x36, 0x93)
@@ -192,7 +193,7 @@ class Game:
         self.render_background()
         self.refresh_count = 0
         self.change_direction = False
-        self.high_score = 0
+        self.high_score = self.read_high_score()
         self.mute = 0
         self.menu()
 
@@ -202,29 +203,63 @@ class Game:
         else:
             pygame.mixer.music.pause()
 
+    def calculate_score(self):
+        return self.snake.length - LENGTH_OF_SNAKE
+
     def display_score(self):
         font = pygame.font.SysFont('arial', 30)
-        score = font.render(f"Score: {self.snake.length - LENGTH_OF_SNAKE}", True, WHITE)
+        score = font.render(f"Score: {self.calculate_score()}", True, WHITE)
         self.surface.blit(score, (600, 0))
         high_score = font.render(f"High Score: {self.high_score}", True, WHITE)
         self.surface.blit(high_score, (800, 0))
+
+    def read_high_score(self):
+        file_path = os.path.dirname(__file__) + "/resources/high_score.txt"
+        try:
+            with open(file_path, 'r+') as f:
+                score = f.read()
+                if not score and score != 0:  # if blank file and score != 0
+                    f.write("0")
+                    score = 0
+                return int(score)
+        except IOError:
+            with open(file_path, 'w') as f:
+                f.write("0")
+            return 0  # if unable to read the high score file, create a new one and set score = 0
+
+    def write_high_score(self):
+        file_path = os.path.dirname(__file__) + "/resources/high_score.txt"
+        try:
+            with open(file_path, 'w') as f:
+                print(self.high_score)
+                f.write(str(self.high_score))
+        except IOError:
+            print("Error writing to High score file")
+            print(IOError)
 
     def is_collision(self, x1, y1, x2, y2):
         if x1 == x2 and y1 == y2:
             return True
         return False
 
+    def show_score_banner(self):
+        font = pygame.font.SysFont('arial', 30)
+        score = self.calculate_score()
+
+        if self.high_score < score:
+            self.high_score = score
+            hs_banner = font.render(f"New High Score!", True, WHITE)
+            self.surface.blit(hs_banner, (200, 250))
+            self.write_high_score()
+
+        score_banner = font.render(f"Game Over! Your score is: {score}", True, WHITE)
+        self.surface.blit(score_banner, (200, 300))
+
     def show_game_over(self):
         self.render_background()
         font = pygame.font.SysFont('arial', 30)
+        self.show_score_banner()
 
-        if self.high_score < self.snake.length:
-            self.high_score = self.snake.length
-            high_score = font.render(f"New High Score!", True, WHITE)
-            self.surface.blit(high_score, (200, 250))
-
-        score = font.render(f"Game Over! Your score is: {self.snake.length}", True, WHITE)
-        self.surface.blit(score, (200, 300))
         line2 = font.render("To play again, press Enter. To Exit, press Escape", True, WHITE)
         self.surface.blit(line2, (200, 350))
         pygame.display.update()
@@ -274,9 +309,8 @@ class Game:
         self.apple.draw()
         self.wall.draw(self.current_map)
         self.display_score()
-        pygame.display.update()
-
         self.eat()
+        pygame.display.update()
 
     def eat(self):
         # snake collides with apple
