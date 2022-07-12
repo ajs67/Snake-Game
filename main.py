@@ -10,7 +10,7 @@ To Exit, press Escape
 Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 """
 
-# TO DO:
+# TODO:
 # fix snake shape, so it is a clear path from head to tail
 # make snake movement smoother
 # improve snake block images
@@ -222,6 +222,7 @@ class ScoreBoard:
         score_banner = font.render(f"Game Over! Your score is: {self.current_score}", True, WHITE)
         self.parent_screen.blit(score_banner, (200, 300))
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -275,7 +276,7 @@ class Game:
 
     def is_apple_valid(self):
         for i in range(self.snake.length):
-            if (self.apple.x == self.snake.x[i]) & (self.apple.y == self.snake.y[i]):  # if apple is inside snake
+            if self.is_collision(self.apple.x, self.apple.y, self.snake.x[i], self.snake.y[i]):  # apple is inside snake
                 return False
         if (self.apple.x, self.apple.y) in self.wall.walls:  # if apple is inside the walls
             return False
@@ -438,7 +439,7 @@ class Game:
                                 self.clock_speed -= 1
                         elif event.key == K_a:
                             self.current_map += 1
-                            if self.current_map == 2:
+                            if self.current_map == 3:  # number of maps limit
                                 self.current_map = 0
                             self.wall.draw(self.current_map)
 
