@@ -10,7 +10,7 @@ Developed with object-oriented programming (OOP), it relies on both event handli
 
 I am working towards launching this game as a scalable web app online to support multiplayer competitions.
 
-This is one of my favorite games so it's exciting I have a lot of fun with it!
+This is one of my favorite games, so enjoy!
 ---------------------------------------------------
 
 Menu Controls:
