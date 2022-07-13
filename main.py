@@ -14,8 +14,9 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # fix snake shape, so it is a clear path from head to tail
 # make snake movement smoother
 # improve snake block images
-# add map import using a txt file -- so map is loaded from a file, any new map can easily be added and used.
 # add mouse interface in menu
+# add bonus timer snacks worth extra points
+# Fix map file transposing when loaded into game (so it can be edited not transposed)
 # add 2 player support
 # host application online, save a record of high score of all players
 # fix game win crash
@@ -74,27 +75,21 @@ class Wall:
         map_walls[5:-5, -MAX_Y // 3 - 1] = 1
         return map_walls
 
-    def vertical_map(self):
-        map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
-        map_walls[1:-1, 1:-1] = 0
-        map_walls[MAX_X//3, 5:-5] = 1
-        map_walls[MAX_X//3 - 1, 5:-5] = 1
-        return map_walls
-
-    def load_map_file(self):
-        file_path = os.path.dirname(__file__) + "/resources/map3.txt"
+    def load_map_file(self,filename):
+        file_path = os.path.dirname(__file__) + "/resources/" + filename
         try:
             map_walls = []
             with open(file_path, 'r') as f:
                 for line in f.readlines():
-                    if map_walls == []:  # intialize the array with first line
-                        values = np.array([int(line,2)], dtype=np.uint32)
-                        view = values.view(dtype=np.uint8)
+                    if map_walls == []:  # initialize the array with first line
+                        values = np.array([int(line,2)], dtype=np.uint32)  # encode the line into uint32
+                        view = values.view(dtype=np.uint8)  # cut the uint 32 into 4 pieces uint8 so unpackbits works
 
+                        # force little endian order so it can decode properly
                         if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
-                            view = view[:, ::-1]
+                            view = view[:, ::-1]  # now reverse the order
 
-                        decoded_line = np.unpackbits(view, count=MAX_Y+1, bitorder='little')[::-1]
+                        decoded_line = np.unpackbits(view, count=MAX_Y+1, bitorder='little')[::-1]  # decoded solution
                         map_walls = decoded_line
                     else:  # add each row of the file to the array line by line
                         values = np.array([int(line, 2)], dtype=np.uint32)
@@ -104,14 +99,10 @@ class Wall:
                             view = view[:, ::-1]
 
                         decoded_line = np.unpackbits(view, count=MAX_Y + 1, bitorder='little')[::-1]
-                        map_walls = np.vstack((map_walls, decoded_line))
+                        map_walls = np.vstack((map_walls, decoded_line))  # stack each new row at the end of the array
                 map_walls = map_walls
                 return map_walls
         except IOError:
-            with open(file_path, 'w') as f:
-                f.write(str(self.blank_map()))
-            with open(file_path, 'r') as f:  # for testing purposes
-                print(f.read())
             print(IOError)
             return self.blank_map()
 
@@ -123,15 +114,11 @@ class Wall:
 
     def draw(self, selected_map):
         map_dict = {
-            0: self.load_map_file(),#blank_map(),
+            0: self.blank_map(),
             1: self.horizontal_map(),
-            2: self.vertical_map(),
-            3: self.load_map_file(),
+            2: self.load_map_file("cross.txt"),
+            3: self.load_map_file("corners.txt"),
             4: self.map_test()}
-
-        #print(self.blank_map())
-        #print(self.load_map_file())
-        #print(self.blank_map() == self.load_map_file())
 
         current_map = map_dict.get(selected_map)
         self.build_map(current_map)
@@ -162,7 +149,7 @@ class Snake:
         self.head_block = pygame.image.load("resources/head_block2.jpg").convert()
         self.tail_block = pygame.image.load("resources/tail_block.jpg").convert()
         self.x = [SIZE * 5] * length
-        self.y = [SIZE * 9] * length
+        self.y = [SIZE * 2] * length
         self.parent_screen = parent_screen
         self.direction = 'right'
         self.length = length
@@ -334,7 +321,7 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.play_sound("crash")
                 raise "Game Over"
-        if not ((SIZE <= self.snake.x[0] <= (MAX_X * SIZE) - SIZE) and (SIZE <= self.snake.y[0] <= (MAX_Y * SIZE) - SIZE)):
+        if not ((SIZE <= self.snake.x[0] <= (MAX_X * SIZE)) and (SIZE <= self.snake.y[0] <= (MAX_Y * SIZE))):
             self.play_sound("crash")
             raise "Hit The Boundaries"
 
