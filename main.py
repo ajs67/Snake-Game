@@ -209,6 +209,7 @@ class ScoreBoard:
         self.parent_screen = parent_screen
         self.current_score = length
         self.high_score = self.read_high_score()
+        self.font = pygame.font.SysFont('arial', 30)  # default font for scores
 
     def calculate_score(self, length):
         self.current_score = length - LENGTH_OF_SNAKE
@@ -218,16 +219,14 @@ class ScoreBoard:
         return True if self.high_score < self.current_score else False
 
     def draw_high_score(self):
-        font = pygame.font.SysFont('arial', 30)
         if self.is_new_high_score():
-            high_score = font.render(f"High Score: {self.current_score}", True, WHITE)
+            high_score = self.font.render(f"High Score: {self.current_score}", True, WHITE)
         else:
-            high_score = font.render(f"High Score: {self.high_score}", True, WHITE)
+            high_score = self.font.render(f"High Score: {self.high_score}", True, WHITE)
         self.parent_screen.blit(high_score, (800, 0))
 
     def draw(self):
-        font = pygame.font.SysFont('arial', 30)
-        score = font.render(f"Score: {self.current_score}", True, WHITE)
+        score = self.font.render(f"Score: {self.current_score}", True, WHITE)
         self.parent_screen.blit(score, (600, 0))
         self.draw_high_score()
 
@@ -254,15 +253,13 @@ class ScoreBoard:
             print("Error writing to High score file")
 
     def show_score_banner(self):
-        font = pygame.font.SysFont('arial', 30)
-
         if self.is_new_high_score():
             self.high_score = self.current_score
-            hs_banner = font.render(f"New High Score!", True, WHITE)
+            hs_banner = self.font.render(f"New High Score!", True, WHITE)
             self.parent_screen.blit(hs_banner, (200, 250))
             self.write_high_score()
 
-        score_banner = font.render(f"Game Over! Your score is: {self.current_score}", True, WHITE)
+        score_banner = self.font.render(f"Game Over! Your score is: {self.current_score}", True, WHITE)
         self.parent_screen.blit(score_banner, (200, 300))
 
 
