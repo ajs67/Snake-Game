@@ -52,6 +52,12 @@ class Wall:
         self.x = [SIZE]
         self.y = [SIZE]
         self.walls = []
+        self.map_dict = {
+            0: self.blank_map(),
+            1: self.horizontal_map(),
+            2: self.load_map_file("cross.txt"),
+            3: self.load_map_file("corners.txt"),
+            4: self.load_map_file("crosshair.txt")}
 
     @staticmethod
     def map_test():
@@ -113,14 +119,7 @@ class Wall:
         self.walls = list(zip(walls_x,walls_y))
 
     def draw(self, selected_map):
-        map_dict = {
-            0: self.blank_map(),
-            1: self.horizontal_map(),
-            2: self.load_map_file("cross.txt"),
-            3: self.load_map_file("corners.txt"),
-            4: self.map_test()}
-
-        current_map = map_dict.get(selected_map)
+        current_map = self.map_dict.get(selected_map)
         self.build_map(current_map)
 
         for current_pos in self.walls:
@@ -471,7 +470,7 @@ class Game:
                                 self.clock_speed -= 1
                         elif event.key == K_a:
                             self.current_map += 1
-                            if self.current_map == 4:  # number of maps limit
+                            if self.current_map == len(self.wall.map_dict):
                                 self.current_map = 0
                             self.wall.draw(self.current_map)
 
