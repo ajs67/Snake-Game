@@ -16,6 +16,8 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # improve snake block images
 # add mouse interface in menu
 # add bonus timer snacks worth extra points
+# add separate high scores for each map
+# separate wall and map objects
 # Fix map file transposing when loaded into game (so it can be edited not transposed)
 # add 2 player support
 # host application online, save a record of high score of all players
@@ -54,7 +56,7 @@ class Wall:
         self.walls = []
         self.map_dict = {
             0: self.blank_map(),
-            1: self.horizontal_map(),
+            1: self.equality(),
             2: self.load_map_file("cross.txt"),
             3: self.load_map_file("corners.txt"),
             4: self.load_map_file("crosshair.txt")}
@@ -74,11 +76,11 @@ class Wall:
         map_walls[1:-1, 1:-1] = 0
         return map_walls
 
-    def horizontal_map(self):
+    def equality(self):
         map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
         map_walls[1:-1, 1:-1] = 0
         map_walls[5:-5, MAX_Y // 3] = 1
-        map_walls[5:-5, -MAX_Y // 3 - 1] = 1
+        map_walls[5:-5, -MAX_Y // 3] = 1
         return map_walls
 
     def load_map_file(self,filename):
@@ -88,21 +90,18 @@ class Wall:
             with open(file_path, 'r') as f:
                 for line in f.readlines():
                     if len(map_walls) == 0:  # initialize the array with first line
-                        values = np.array([int(line,2)], dtype=np.uint32)  # encode the line into uint32
+                        values = np.array([int(line, 2)], dtype=np.uint32)  # encode the line into uint32
                         view = values.view(dtype=np.uint8)  # cut the uint 32 into 4 pieces uint8 so unpackbits works
 
-                        # force little endian order so it can decode properly
+                        # force little endian order so it can decode properly if not already set
                         if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
-                            view = view[:, ::-1]  # now reverse the order
+                            view = view[::-1]  # reverse the order
 
                         decoded_line = np.unpackbits(view, count=MAX_Y+1, bitorder='little')[::-1]  # decoded solution
                         map_walls = decoded_line
                     else:  # add each row of the file to the array line by line
                         values = np.array([int(line, 2)], dtype=np.uint32)
                         view = values.view(dtype=np.uint8)
-
-                        if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
-                            view = view[:, ::-1]
 
                         decoded_line = np.unpackbits(view, count=MAX_Y + 1, bitorder='little')[::-1]
                         map_walls = np.vstack((map_walls, decoded_line))  # stack each new row at the end of the array
@@ -123,7 +122,7 @@ class Wall:
         self.build_map(current_map)
 
         for current_pos in self.walls:
-            self.parent_screen.blit(self.wall, current_pos) # draw wall block image
+            self.parent_screen.blit(self.wall, current_pos)  # draw wall block image
 
 
 class Apple:
