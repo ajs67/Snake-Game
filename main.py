@@ -87,7 +87,7 @@ class Wall:
             map_walls = []
             with open(file_path, 'r') as f:
                 for line in f.readlines():
-                    if map_walls == []:  # initialize the array with first line
+                    if len(map_walls) == 0:  # initialize the array with first line
                         values = np.array([int(line,2)], dtype=np.uint32)  # encode the line into uint32
                         view = values.view(dtype=np.uint8)  # cut the uint 32 into 4 pieces uint8 so unpackbits works
 
@@ -210,6 +210,8 @@ class ScoreBoard:
 
     def calculate_score(self, length):
         self.current_score = length - LENGTH_OF_SNAKE
+        if self.high_score < self.current_score:
+            self.high_score = self.current_score
         return self.current_score
 
     def draw(self):
