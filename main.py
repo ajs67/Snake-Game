@@ -27,6 +27,7 @@ from pygame.locals import *
 import random as r
 import numpy as np
 import os
+import sys
 
 SIZE = 40  # block image file is 40 x 40 pixels
 BACKGROUND_COLOR = (0x16, 0x36, 0x93)
@@ -51,9 +52,10 @@ class Wall:
         self.y = [SIZE]
         self.walls = []
 
-    def map_test(self):
+    @staticmethod
+    def map_test():
         # test map for debugging
-        test_map = np.ones((MAX_X + 1, MAX_Y + 1))
+        test_map = np.ones((MAX_X + 1, MAX_Y + 1), dtype=np.uint8)
         test_map[1:-1, 1:MAX_Y // 2 + 2] = 0
 
         test_map[15:-1, MAX_Y // 2 - 2: MAX_Y // 2 + 2] = 1
@@ -61,23 +63,57 @@ class Wall:
         return test_map
 
     def blank_map(self):
-        map_walls = np.ones((MAX_X+1, MAX_Y+1))
+        map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
         map_walls[1:-1, 1:-1] = 0
         return map_walls
 
     def horizontal_map(self):
-        map_walls = np.ones((MAX_X+1, MAX_Y+1))
+        map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
         map_walls[1:-1, 1:-1] = 0
-        map_walls[4:-4, MAX_Y // 3] = 1
-        map_walls[4:-4, -MAX_Y // 3 - 1] = 1
+        map_walls[5:-5, MAX_Y // 3] = 1
+        map_walls[5:-5, -MAX_Y // 3 - 1] = 1
         return map_walls
 
     def vertical_map(self):
-        map_walls = np.ones((MAX_X+1, MAX_Y+1))
+        map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
         map_walls[1:-1, 1:-1] = 0
-        map_walls[4:-4, MAX_Y // 3] = 1
-        map_walls[4:-4, -MAX_Y // 3 - 1] = 1
+        map_walls[MAX_X//3, 5:-5] = 1
+        map_walls[MAX_X//3 - 1, 5:-5] = 1
         return map_walls
+
+    def load_map_file(self):
+        file_path = os.path.dirname(__file__) + "/resources/map3.txt"
+        try:
+            map_walls = []
+            with open(file_path, 'r') as f:
+                for line in f.readlines():
+                    if map_walls == []:  # intialize the array with first line
+                        values = np.array([int(line,2)], dtype=np.uint32)
+                        view = values.view(dtype=np.uint8)
+
+                        if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
+                            view = view[:, ::-1]
+
+                        decoded_line = np.unpackbits(view, count=MAX_Y+1, bitorder='little')[::-1]
+                        map_walls = decoded_line
+                    else:  # add each row of the file to the array line by line
+                        values = np.array([int(line, 2)], dtype=np.uint32)
+                        view = values.view(dtype=np.uint8)
+
+                        if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
+                            view = view[:, ::-1]
+
+                        decoded_line = np.unpackbits(view, count=MAX_Y + 1, bitorder='little')[::-1]
+                        map_walls = np.vstack((map_walls, decoded_line))
+                map_walls = map_walls
+                return map_walls
+        except IOError:
+            with open(file_path, 'w') as f:
+                f.write(str(self.blank_map()))
+            with open(file_path, 'r') as f:  # for testing purposes
+                print(f.read())
+            print(IOError)
+            return self.blank_map()
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
@@ -85,8 +121,18 @@ class Wall:
         walls_x *= SIZE
         self.walls = list(zip(walls_x,walls_y))
 
-    def draw(self,selected_map):
-        map_dict = {0: self.blank_map(), 1: self.horizontal_map(), 2: self.vertical_map(), 3: self.map_test()}
+    def draw(self, selected_map):
+        map_dict = {
+            0: self.load_map_file(),#blank_map(),
+            1: self.horizontal_map(),
+            2: self.vertical_map(),
+            3: self.load_map_file(),
+            4: self.map_test()}
+
+        #print(self.blank_map())
+        #print(self.load_map_file())
+        #print(self.blank_map() == self.load_map_file())
+
         current_map = map_dict.get(selected_map)
         self.build_map(current_map)
 
@@ -438,7 +484,7 @@ class Game:
                                 self.clock_speed -= 1
                         elif event.key == K_a:
                             self.current_map += 1
-                            if self.current_map == 3:  # number of maps limit
+                            if self.current_map == 4:  # number of maps limit
                                 self.current_map = 0
                             self.wall.draw(self.current_map)
 
