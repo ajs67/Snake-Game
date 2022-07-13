@@ -23,6 +23,7 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # host application online, save a record of high score of all players
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
+# Implement Multithreading to improve performance. (It seems like game clock slows down randomly)
 
 
 import pygame
@@ -31,6 +32,8 @@ import random as r
 import numpy as np
 import os
 import sys
+import timeit
+import time
 
 SIZE = 40  # block image file is 40 x 40 pixels
 BACKGROUND_COLOR = (0x16, 0x36, 0x93)
@@ -209,16 +212,24 @@ class ScoreBoard:
 
     def calculate_score(self, length):
         self.current_score = length - LENGTH_OF_SNAKE
-        if self.high_score < self.current_score:
-            self.high_score = self.current_score
         return self.current_score
+
+    def is_new_high_score(self):
+        return True if self.high_score < self.current_score else False
+
+    def draw_high_score(self):
+        font = pygame.font.SysFont('arial', 30)
+        if self.is_new_high_score():
+            high_score = font.render(f"High Score: {self.current_score}", True, WHITE)
+        else:
+            high_score = font.render(f"High Score: {self.high_score}", True, WHITE)
+        self.parent_screen.blit(high_score, (800, 0))
 
     def draw(self):
         font = pygame.font.SysFont('arial', 30)
         score = font.render(f"Score: {self.current_score}", True, WHITE)
         self.parent_screen.blit(score, (600, 0))
-        high_score = font.render(f"High Score: {self.high_score}", True, WHITE)
-        self.parent_screen.blit(high_score, (800, 0))
+        self.draw_high_score()
 
     def read_high_score(self):
         file_path = os.path.dirname(__file__) + "/resources/high_score.txt"
@@ -245,7 +256,7 @@ class ScoreBoard:
     def show_score_banner(self):
         font = pygame.font.SysFont('arial', 30)
 
-        if self.high_score < self.current_score:
+        if self.is_new_high_score():
             self.high_score = self.current_score
             hs_banner = font.render(f"New High Score!", True, WHITE)
             self.parent_screen.blit(hs_banner, (200, 250))
@@ -421,7 +432,7 @@ class Game:
     def pause_game(self):
         font = pygame.font.SysFont('arial', 50, bold=True)
         title = font.render(f"PAUSED", True, WHITE)
-        self.surface.blit(title, (400, 400))
+        self.surface.blit(title, (400, 450))
         pygame.display.update()
 
     def change_speed_reset(self, speed):
