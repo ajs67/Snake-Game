@@ -7,7 +7,7 @@ Choose your difficulty:
 To Play, press Enter or press a number to choose your speed.
 To Exit, press Escape
 
-Programmed using python and pygame library by Alexander Schwartz "Just for fun"
+Maps, Images, and the high score save files are all accessed through the resources folder.
 """
 
 # TODO:
@@ -24,6 +24,7 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
 # Implement Multithreading to improve performance. (It seems like game clock slows down randomly)
+# Speed and resource optimization
 
 
 import pygame
@@ -32,14 +33,12 @@ import random as r
 import numpy as np
 import os
 import sys
-import timeit
-import time
+
 
 SIZE = 40  # block image file is 40 x 40 pixels
 BACKGROUND_COLOR = (0x16, 0x36, 0x93)
 BLACK = (0, 0, 0)
 WHITE = (255,255,255)
-# corners  => (0,0), (24,0), (0,19), (24,19)
 MAX_X = 24
 MAX_Y = 19
 MAX_AREA = (MAX_Y + 1) * (MAX_X + 1)
@@ -120,10 +119,11 @@ class Wall:
         walls_x *= SIZE
         self.walls = list(zip(walls_x,walls_y))
 
-    def draw(self, selected_map):
+    def change_map(self, selected_map):
         current_map = self.map_dict.get(selected_map)
         self.build_map(current_map)
 
+    def draw(self):
         for current_pos in self.walls:
             self.parent_screen.blit(self.wall, current_pos)  # draw wall block image
 
@@ -270,14 +270,15 @@ class Game:
 
         pygame.mixer.init()
         self.play_bg_music()
-        self.clock_speed = MEDIUM_SPEED # default medium
+        self.clock_speed = MEDIUM_SPEED  # default medium
 
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE)
         self.snake.draw()
         self.wall = Wall(self.surface)
         self.current_map = 0
-        self.wall.draw(self.current_map)
+        self.wall.change_map(self.current_map)
+        self.wall.draw()
         self.apple = Apple(self.surface)
         self.apple_valid = False
         self.valid_apple_move()
@@ -320,7 +321,6 @@ class Game:
                 return False
         if (self.apple.x, self.apple.y) in self.wall.walls:  # if apple is inside the walls
             return False
-
         return True
 
     def is_game_over(self):
@@ -334,7 +334,7 @@ class Game:
             raise "Hit The Boundaries"
 
         for square in self.wall.walls:  # if collision with walls
-           if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
+            if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
         if self.snake.length - 2 >= (MAX_AREA - len(self.wall.walls)): # WIP fix game win crash
@@ -395,7 +395,7 @@ class Game:
         else:
             self.snake.draw()
         self.apple.draw()
-        self.wall.draw(self.current_map)
+        self.wall.draw()
         self.score_board.calculate_score(self.snake.length)
         self.score_board.draw()
         self.eat()
@@ -481,7 +481,8 @@ class Game:
                             self.current_map += 1
                             if self.current_map == len(self.wall.map_dict):
                                 self.current_map = 0
-                            self.wall.draw(self.current_map)
+                            self.wall.change_map(self.current_map)
+                            self.wall.draw()
 
                     else:
 
