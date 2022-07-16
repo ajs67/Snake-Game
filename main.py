@@ -40,7 +40,6 @@ BLACK = (0, 0, 0)
 WHITE = (255,255,255)
 MAX_X = 24
 MAX_Y = 19
-MAX_AREA = (MAX_Y + 1) * (MAX_X + 1)
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 800
 LENGTH_OF_SNAKE = 4
@@ -169,7 +168,7 @@ class Snake:
             else:
                 self.parent_screen.blit(self.x_block, (self.x[i], self.y[i]))
         for i in range(2, self.length - 1, 2): # every other block
-            if self.direction == 'left' or self.direction == 'right':  # WIP change block image to show shape of snake
+            if self.direction == 'left' or self.direction == 'right':
                 self.parent_screen.blit(self.y_block, (self.x[i], self.y[i]))
             else:
                 self.parent_screen.blit(self.y_block, (self.x[i], self.y[i]))
@@ -339,7 +338,7 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
-        if self.snake.length - 2 >= (MAX_AREA - len(self.wall.walls)): # WIP fix game win crash
+        if self.snake.length - 2 >= ((MAX_Y + 1) * (MAX_X + 1) - len(self.wall.walls)): # WIP fix game win crash
             self.play_sound("ding")
             print("You WON!!!")
             raise "You WON!!!"
