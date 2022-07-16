@@ -35,8 +35,7 @@ import os
 import sys
 
 
-SIZE = 40  # block image file is 40 x 40 pixels
-BACKGROUND_COLOR = (0x16, 0x36, 0x93)
+# block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
 WHITE = (255,255,255)
 MAX_X = 24
@@ -44,17 +43,17 @@ MAX_Y = 19
 MAX_AREA = (MAX_Y + 1) * (MAX_X + 1)
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 800
-REFRESH_RATE = 0
 LENGTH_OF_SNAKE = 4
 MEDIUM_SPEED = 9
 
 
 class Wall:
-    def __init__(self, parent_screen):
+    def __init__(self, parent_screen, block_size):
         self.wall = pygame.image.load("resources/wall.jpg").convert()
         self.parent_screen = parent_screen
-        self.x = [SIZE]
-        self.y = [SIZE]
+        self.block_size = block_size
+        self.x = [self.block_size]
+        self.y = [self.block_size]
         self.walls = []
         self.map_dict = {
             0: self.blank_map(),
@@ -115,8 +114,8 @@ class Wall:
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
-        walls_y *= SIZE
-        walls_x *= SIZE
+        walls_y *= self.block_size
+        walls_x *= self.block_size
         self.walls = list(zip(walls_x,walls_y))
 
     def change_map(self, selected_map):
@@ -129,28 +128,30 @@ class Wall:
 
 
 class Apple:
-    def __init__(self, parent_screen):
+    def __init__(self, parent_screen, block_size):
         self.image = pygame.image.load("resources/apple.jpg").convert()
         self.parent_screen = parent_screen
+        self.block_size = block_size
         self.x = 0  # apple starting position x
         self.y = 0  # apple starting position y
 
     def move(self):
-        self.x = r.randint(1, 23) * SIZE
-        self.y = r.randint(1, 18) * SIZE
+        self.x = r.randint(1, 23) * self.block_size
+        self.y = r.randint(1, 18) * self.block_size
 
     def draw(self):  # draw apple
-        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1)) # + 1 to position so it doesn't cover grid
+        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # + 1 to position so it doesn't cover grid
 
 
 class Snake:
-    def __init__(self, parent_screen, length):
+    def __init__(self, parent_screen, length, block_size):
         self.x_block = pygame.image.load("resources/x_block.jpg").convert()
         self.y_block = pygame.image.load("resources/snake_block_2.jpg").convert()
         self.head_block = pygame.image.load("resources/head_block2.jpg").convert()
         self.tail_block = pygame.image.load("resources/tail_block.jpg").convert()
-        self.x = [SIZE * 5] * length
-        self.y = [SIZE * 2] * length
+        self.block_size = block_size
+        self.x = [self.block_size * 5] * length
+        self.y = [self.block_size * 2] * length
         self.parent_screen = parent_screen
         self.direction = 'right'
         self.length = length
@@ -193,13 +194,13 @@ class Snake:
             self.y[i] = self.y[i - 1]
 
         if self.direction == 'left':
-            self.x[0] -= SIZE
+            self.x[0] -= self.block_size
         elif self.direction == 'right':
-            self.x[0] += SIZE
+            self.x[0] += self.block_size
         elif self.direction == 'down':
-            self.y[0] += SIZE
+            self.y[0] += self.block_size
         elif self.direction == 'up':
-            self.y[0] -= SIZE
+            self.y[0] -= self.block_size
         self.draw()
 
 
@@ -271,15 +272,16 @@ class Game:
         pygame.mixer.init()
         self.play_bg_music()
         self.clock_speed = MEDIUM_SPEED  # default medium
+        self.block_size = 40  # blocks are 40x40 pixels
 
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.snake = Snake(self.surface, LENGTH_OF_SNAKE)
+        self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.snake.draw()
-        self.wall = Wall(self.surface)
+        self.wall = Wall(self.surface, self.block_size)
         self.current_map = 0
         self.wall.change_map(self.current_map)
         self.wall.draw()
-        self.apple = Apple(self.surface)
+        self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = False
         self.valid_apple_move()
         self.apple.draw()
@@ -329,7 +331,7 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.play_sound("crash")
                 raise "Game Over"
-        if not ((SIZE <= self.snake.x[0] <= (MAX_X * SIZE)) and (SIZE <= self.snake.y[0] <= (MAX_Y * SIZE))):
+        if not ((self.block_size <= self.snake.x[0] <= (MAX_X * self.block_size)) and (self.block_size <= self.snake.y[0] <= (MAX_Y * self.block_size))):
             self.play_sound("crash")
             raise "Hit The Boundaries"
 
@@ -353,8 +355,8 @@ class Game:
         pygame.display.update()
 
     def reset(self):
-        self.snake = Snake(self.surface, LENGTH_OF_SNAKE)
-        self.apple = Apple(self.surface)
+        self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
+        self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = 0
         self.valid_apple_move()
 
@@ -367,10 +369,9 @@ class Game:
         pygame.mixer.music.play()
 
     def draw_grid(self):
-        block_size = SIZE
-        for x in range(0, WINDOW_WIDTH, SIZE):
-            for y in range(0, WINDOW_WIDTH, SIZE):
-                rect = pygame.Rect(x, y, block_size, block_size)
+        for x in range(0, WINDOW_WIDTH, self.block_size):
+            for y in range(0, WINDOW_WIDTH, self.block_size):
+                rect = pygame.Rect(x, y, self.block_size, self.block_size)
                 pygame.draw.rect(self.surface, BLACK, rect, 1)
 
     def render_background(self):
@@ -378,7 +379,8 @@ class Game:
         self.surface.blit(bg, (0, 0))
 
     def is_ready_to_render(self):
-        if self.refresh_count == REFRESH_RATE:
+        refresh_rate = 0
+        if self.refresh_count == refresh_rate:
             self.refresh_count = 0
             return True
         else:
@@ -448,12 +450,12 @@ class Game:
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         running = False
-                    if (event.key == K_m): # toggle mute music
-                            self.mute = (1 if self.mute == 0 else 0)
-                            self.toggle_music()
+                    if event.key == K_m:  # toggle mute music
+                        self.mute = (1 if self.mute == 0 else 0)
+                        self.toggle_music()
 
                     if event.key == K_RETURN:
-                        if pause == True:
+                        if pause:
                             pause = False
                         else:
                             pause = True
@@ -499,8 +501,6 @@ class Game:
                             self.snake.move_right()
                             self.change_direction = True
 
-
-
                 elif event.type == QUIT:
                     running = False
 
@@ -512,7 +512,6 @@ class Game:
                 self.toggle_music()
                 pause = True
                 self.reset()
-
 
 
 if __name__ == "__main__":
