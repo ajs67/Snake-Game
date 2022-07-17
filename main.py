@@ -45,11 +45,12 @@ LENGTH_OF_SNAKE = 4
 MEDIUM_SPEED = 9
 
 
+# Builds the list of wall coordinates for the map/game board
 class GameMap:
     def __init__(self, block_size):
         self.block_size = block_size
         self.walls = []
-        self.map_instance = map_dictionary.MapDictionary(MAX_X, MAX_Y)
+        self.map_instance = map_dictionary.MapDictionary(MAX_X, MAX_Y)  # generates map array by loading from map files
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
@@ -91,8 +92,8 @@ class Apple:
 
 class Snake:
     def __init__(self, parent_screen, length, block_size):
-        self.x_block = pygame.image.load("resources/x_block.jpg").convert()
-        self.y_block = pygame.image.load("resources/snake_block_2.jpg").convert()
+        self.odd_block = pygame.image.load("resources/odd_block.jpg").convert()
+        self.even_block = pygame.image.load("resources/even_block.jpg").convert()
         self.head_block = pygame.image.load("resources/head_block2.jpg").convert()
         self.tail_block = pygame.image.load("resources/tail_block.jpg").convert()
         self.block_size = block_size
@@ -109,16 +110,16 @@ class Snake:
 
     def draw(self):
         self.parent_screen.blit(self.head_block, (self.x[0] + 1, self.y[0] + 1))  # draw head + 1 to not cover the grid
-        for i in range(1, self.length - 1, 2): # every other normal
+        for i in range(1, self.length - 1, 2):  # every other normal
             if self.direction == 'left' or self.direction == 'right':  # WIP change block image to show shape of snake
-                self.parent_screen.blit(self.x_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
             else:
-                self.parent_screen.blit(self.x_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
         for i in range(2, self.length - 1, 2): # every other block
             if self.direction == 'left' or self.direction == 'right':
-                self.parent_screen.blit(self.y_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
             else:
-                self.parent_screen.blit(self.y_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
         self.parent_screen.blit(self.tail_block, (self.x[self.length - 1], self.y[self.length - 1]))  # draw tail
 
     def move_left(self):
