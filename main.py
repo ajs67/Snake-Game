@@ -119,16 +119,13 @@ class GameMap:
 
 
 class Wall:
-    def __init__(self, parent_screen, block_size):
+    def __init__(self, parent_screen):
         self.wall = pygame.image.load("resources/wall.jpg").convert()
         self.parent_screen = parent_screen
-        #self.game_map = GameMap(block_size)
-        #self.walls = self.game_map.build_map(0)
         self.x = 0
         self.y = 0
 
     def draw(self, xy):  # (x, y) packed as a tuple
-        #for current_pos in self.walls:
         self.parent_screen.blit(self.wall, xy)  # draw wall block image
 
 
@@ -282,7 +279,7 @@ class Game:
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.snake.draw()
-        self.wall = Wall(self.surface, self.block_size)
+        self.wall = Wall(self.surface)
         self.current_map = 0
         self.game_map = GameMap(self.block_size)
         self.game_map.change_map(self.current_map)
@@ -407,8 +404,7 @@ class Game:
         else:
             self.snake.draw()
         self.apple.draw()
-        for wall_xy in self.game_map.walls:
-            self.wall.draw(wall_xy)
+        self.draw_map()
         self.score_board.calculate_score(self.snake.length)
         self.score_board.draw()
         self.eat()
@@ -485,9 +481,9 @@ class Game:
                         elif event.key == K_0:
                             self.change_speed_reset(20)
                             pause = False
-                        elif event.key == K_EQUALS: # Hidden increase speed function
+                        elif event.key == K_EQUALS:  # Hidden increase speed function
                             self.clock_speed += 1
-                        elif event.key == K_MINUS: # Hidden lower speed function
+                        elif event.key == K_MINUS:  # Hidden lower speed function
                             if self.clock_speed > 1:
                                 self.clock_speed -= 1
                         elif event.key == K_a:
