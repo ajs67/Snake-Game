@@ -17,7 +17,6 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # add mouse interface in menu
 # add bonus timer snacks worth extra points
 # add separate high scores for each map
-# separate wall and map objects
 # Fix map file transposing when loaded into game (so it can be edited not transposed)
 # add 2 player support
 # host application online, save a record of high score of all players
@@ -32,7 +31,7 @@ from pygame.locals import *
 import random as r
 import numpy as np
 import os
-import sys
+import map_dictionary
 
 
 # block image file is 40 x 40 pixels
@@ -50,62 +49,7 @@ class GameMap:
     def __init__(self, block_size):
         self.block_size = block_size
         self.walls = []
-        self.map_dict = {
-            0: self.blank_map(),
-            1: self.equality(),
-            2: self.load_map_file("cross.txt"),
-            3: self.load_map_file("corners.txt"),
-            4: self.load_map_file("crosshair.txt")}
-
-    @staticmethod
-    def map_test():
-        # test map for debugging, nearly full of walls
-        test_map = np.ones((MAX_X + 1, MAX_Y + 1), dtype=np.uint8)
-
-        test_map[1:-1, 1:MAX_Y // 2 + 2] = 0  # build the top half of the walls
-        test_map[15:-1, MAX_Y // 2 - 2: MAX_Y // 2 + 2] = 1  # build the middle right side of walls
-        test_map[0:MAX_X, 0:MAX_Y // 3 + 3] = 1  # build the bottom half of walls
-        return test_map
-
-    def blank_map(self):
-        map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
-        map_walls[1:-1, 1:-1] = 0
-        return map_walls
-
-    def equality(self):
-        map_walls = np.ones((MAX_X+1, MAX_Y+1), dtype=np.uint8)
-        map_walls[1:-1, 1:-1] = 0
-        map_walls[5:-5, MAX_Y // 3] = 1
-        map_walls[5:-5, -MAX_Y // 3] = 1
-        return map_walls
-
-    def load_map_file(self, filename):
-        file_path = os.path.dirname(__file__) + "/resources/" + filename
-        try:
-            map_walls = []
-            with open(file_path, 'r') as f:
-                for line in f.readlines():
-                    if len(map_walls) == 0:  # initialize the array with first line
-                        values = np.array([int(line, 2)], dtype=np.uint32)  # encode the line into uint32
-                        view = values.view(dtype=np.uint8)  # cut the uint 32 into 4 pieces uint8 so unpackbits works
-
-                        # force little endian order so it can decode properly if not already set
-                        if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
-                            view = view[::-1]  # reverse the order
-
-                        decoded_line = np.unpackbits(view, count=MAX_Y+1, bitorder='little')[::-1]  # decoded solution
-                        map_walls = decoded_line
-                    else:  # add each row of the file to the array line by line
-                        values = np.array([int(line, 2)], dtype=np.uint32)
-                        view = values.view(dtype=np.uint8)
-
-                        decoded_line = np.unpackbits(view, count=MAX_Y + 1, bitorder='little')[::-1]
-                        map_walls = np.vstack((map_walls, decoded_line))  # stack each new row at the end of the array
-                map_walls = map_walls
-                return map_walls
-        except IOError:
-            print(IOError)
-            return self.blank_map()
+        self.map_instance = map_dictionary.MapDictionary(MAX_X, MAX_Y)
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
@@ -114,7 +58,7 @@ class GameMap:
         self.walls = list(zip(walls_x,walls_y))
 
     def change_map(self, selected_map):
-        current_map_blueprint = self.map_dict.get(selected_map)
+        current_map_blueprint = self.map_instance.map_dict.get(selected_map)
         self.build_map(current_map_blueprint)
 
 
@@ -488,7 +432,7 @@ class Game:
                                 self.clock_speed -= 1
                         elif event.key == K_a:
                             self.current_map += 1
-                            if self.current_map == len(self.game_map.map_dict):
+                            if self.current_map == len(self.game_map.map_instance.map_dict):
                                 self.current_map = 0
                             self.game_map.change_map(self.current_map)
                             self.draw_map()
