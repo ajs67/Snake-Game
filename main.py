@@ -129,15 +129,15 @@ class Apple:
         self.image = pygame.image.load("resources/apple.jpg").convert()
         self.parent_screen = parent_screen
         self.block_size = block_size
-        self.x = 0  # apple starting position x
-        self.y = 0  # apple starting position y
+        self.x = 0
+        self.y = 0
 
     def move(self):
         self.x = r.randint(1, 23) * self.block_size
         self.y = r.randint(1, 18) * self.block_size
 
     def draw(self):  # draw apple
-        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # + 1 to position so it doesn't cover grid
+        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # pos + 1 to position so it doesn't cover grid
 
 
 class Snake:
