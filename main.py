@@ -46,10 +46,8 @@ LENGTH_OF_SNAKE = 4
 MEDIUM_SPEED = 9
 
 
-class Wall:
-    def __init__(self, parent_screen, block_size):
-        self.wall = pygame.image.load("resources/wall.jpg").convert()
-        self.parent_screen = parent_screen
+class GameMap:
+    def __init__(self, block_size):
         self.block_size = block_size
         self.walls = []
         self.map_dict = {
@@ -61,12 +59,12 @@ class Wall:
 
     @staticmethod
     def map_test():
-        # test map for debugging
+        # test map for debugging, nearly full of walls
         test_map = np.ones((MAX_X + 1, MAX_Y + 1), dtype=np.uint8)
-        test_map[1:-1, 1:MAX_Y // 2 + 2] = 0
 
-        test_map[15:-1, MAX_Y // 2 - 2: MAX_Y // 2 + 2] = 1
-        test_map[0:MAX_X, 0:MAX_Y // 3 + 3] = 1
+        test_map[1:-1, 1:MAX_Y // 2 + 2] = 0  # build the top half of the walls
+        test_map[15:-1, MAX_Y // 2 - 2: MAX_Y // 2 + 2] = 1  # build the middle right side of walls
+        test_map[0:MAX_X, 0:MAX_Y // 3 + 3] = 1  # build the bottom half of walls
         return test_map
 
     def blank_map(self):
@@ -81,7 +79,7 @@ class Wall:
         map_walls[5:-5, -MAX_Y // 3] = 1
         return map_walls
 
-    def load_map_file(self,filename):
+    def load_map_file(self, filename):
         file_path = os.path.dirname(__file__) + "/resources/" + filename
         try:
             map_walls = []
@@ -116,12 +114,22 @@ class Wall:
         self.walls = list(zip(walls_x,walls_y))
 
     def change_map(self, selected_map):
-        current_map = self.map_dict.get(selected_map)
-        self.build_map(current_map)
+        current_map_blueprint = self.map_dict.get(selected_map)
+        self.build_map(current_map_blueprint)
 
-    def draw(self):
-        for current_pos in self.walls:
-            self.parent_screen.blit(self.wall, current_pos)  # draw wall block image
+
+class Wall:
+    def __init__(self, parent_screen, block_size):
+        self.wall = pygame.image.load("resources/wall.jpg").convert()
+        self.parent_screen = parent_screen
+        #self.game_map = GameMap(block_size)
+        #self.walls = self.game_map.build_map(0)
+        self.x = 0
+        self.y = 0
+
+    def draw(self, xy):  # (x, y) packed as a tuple
+        #for current_pos in self.walls:
+        self.parent_screen.blit(self.wall, xy)  # draw wall block image
 
 
 class Apple:
@@ -276,8 +284,9 @@ class Game:
         self.snake.draw()
         self.wall = Wall(self.surface, self.block_size)
         self.current_map = 0
-        self.wall.change_map(self.current_map)
-        self.wall.draw()
+        self.game_map = GameMap(self.block_size)
+        self.game_map.change_map(self.current_map)
+        self.draw_map()
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = False
         self.valid_apple_move()
@@ -318,9 +327,13 @@ class Game:
         for i in range(self.snake.length):
             if self.is_collision(self.apple.x, self.apple.y, self.snake.x[i], self.snake.y[i]):  # apple is inside snake
                 return False
-        if (self.apple.x, self.apple.y) in self.wall.walls:  # if apple is inside the walls
+        if (self.apple.x, self.apple.y) in self.game_map.walls:  # if apple is inside the walls
             return False
         return True
+
+    def draw_map(self):
+        for wall_xy in self.game_map.walls:
+            self.wall.draw(wall_xy)
 
     def is_game_over(self):
         # snake collides with itself
@@ -332,11 +345,11 @@ class Game:
             self.play_sound("crash")
             raise "Hit The Boundaries"
 
-        for square in self.wall.walls:  # if collision with walls
+        for square in self.game_map.walls:  # if collision with walls
             if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
-        if self.snake.length - 2 >= ((MAX_Y + 1) * (MAX_X + 1) - len(self.wall.walls)): # WIP fix game win crash
+        if self.snake.length - 2 >= ((MAX_Y + 1) * (MAX_X + 1) - len(self.game_map.walls)): # WIP fix game win crash
             self.play_sound("ding")
             print("You WON!!!")
             raise "You WON!!!"
@@ -394,7 +407,8 @@ class Game:
         else:
             self.snake.draw()
         self.apple.draw()
-        self.wall.draw()
+        for wall_xy in self.game_map.walls:
+            self.wall.draw(wall_xy)
         self.score_board.calculate_score(self.snake.length)
         self.score_board.draw()
         self.eat()
@@ -478,10 +492,10 @@ class Game:
                                 self.clock_speed -= 1
                         elif event.key == K_a:
                             self.current_map += 1
-                            if self.current_map == len(self.wall.map_dict):
+                            if self.current_map == len(self.game_map.map_dict):
                                 self.current_map = 0
-                            self.wall.change_map(self.current_map)
-                            self.wall.draw()
+                            self.game_map.change_map(self.current_map)
+                            self.draw_map()
 
                     else:
 
