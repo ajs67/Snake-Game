@@ -51,8 +51,6 @@ class Wall:
         self.wall = pygame.image.load("resources/wall.jpg").convert()
         self.parent_screen = parent_screen
         self.block_size = block_size
-        self.x = [self.block_size]
-        self.y = [self.block_size]
         self.walls = []
         self.map_dict = {
             0: self.blank_map(),
