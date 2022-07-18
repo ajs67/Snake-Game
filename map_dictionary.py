@@ -25,7 +25,7 @@ class MapDictionary:
         return test_map
 
     def blank_map(self):
-        map_walls = np.ones((self.max_x + 1, self.max_y + 1), dtype=np.uint8)
+        map_walls = np.ones((self.max_y + 1, self.max_x + 1), dtype=np.uint8)
         map_walls[1:-1, 1:-1] = 0
         return map_walls
 
@@ -46,19 +46,18 @@ class MapDictionary:
                         values = np.array([int(line, 2)], dtype=np.uint32)  # encode the line into uint32
                         view = values.view(dtype=np.uint8)  # cut the uint 32 into 4 pieces uint8 so unpackbits works
 
-                        # force little endian order so it can decode properly if not already set
+                        # force little endian order, so it can decode properly if not already set
                         if values.dtype.byteorder == '>' or (values.dtype.byteorder == '=' and sys.byteorder == 'big'):
                             view = view[::-1]  # reverse the order
 
-                        decoded_line = np.unpackbits(view, count=self.max_y + 1, bitorder='little')[::-1]  # decoded solution
+                        decoded_line = np.unpackbits(view, count=self.max_x + 1, bitorder='little')[::-1]  # decoded solution
                         map_walls = decoded_line
                     else:  # add each row of the file to the array line by line
                         values = np.array([int(line, 2)], dtype=np.uint32)
                         view = values.view(dtype=np.uint8)
 
-                        decoded_line = np.unpackbits(view, count=self.max_y + 1, bitorder='little')[::-1]
+                        decoded_line = np.unpackbits(view, count=self.max_x + 1, bitorder='little')[::-1]
                         map_walls = np.vstack((map_walls, decoded_line))  # stack each new row at the end of the array
-                map_walls = map_walls
                 return map_walls
         except IOError:
             print(IOError)
