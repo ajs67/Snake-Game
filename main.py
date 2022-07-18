@@ -23,7 +23,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
 # Implement Multithreading to improve performance. (It seems like game clock slows down randomly)
-# Speed and resource optimization
+# Speed and resource optimization, performance is slightly worse when snake is very long
 # Separate scoreboard and score calculation classes
 
 
@@ -58,7 +58,7 @@ class GameMap:
         walls_x, walls_y = np.nonzero(map_blueprint)
         walls_y *= self.block_size
         walls_x *= self.block_size
-        self.walls = list(zip(walls_x,walls_y))
+        self.walls = list(zip(walls_y,walls_x))
 
     def change_map(self, selected_map):
         current_map_blueprint = self.map_instance.map_dict.get(selected_map)
