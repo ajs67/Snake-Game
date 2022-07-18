@@ -71,3 +71,4 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 
 ![Snake Gameplay](/resources/gameplay1.gif "Snake Gameplay")
 ![Snake Gameplay](/resources/gameplayVortex.gif "Vortex")
+![Snake Gameplay](/resources/gameplayAll.gif "All Maps")
