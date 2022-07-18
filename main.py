@@ -24,6 +24,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # develop AI snake that can win the game every time in the shortest amount of time possible
 # Implement Multithreading to improve performance. (It seems like game clock slows down randomly)
 # Speed and resource optimization
+# Separate scoreboard and score calculation classes
 
 
 import pygame
@@ -45,8 +46,8 @@ LENGTH_OF_SNAKE = 4
 MEDIUM_SPEED = 9
 
 
-# Builds the list of wall coordinates for the map/game board
 class GameMap:
+    # Builds the list of wall coordinates for the map/game board
     def __init__(self, block_size):
         self.block_size = block_size
         self.walls = []
@@ -87,7 +88,7 @@ class Apple:
         self.y = r.randint(1, 18) * self.block_size
 
     def draw(self):  # draw apple
-        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # pos + 1 to position so it doesn't cover grid
+        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # pos + 1 to position, so it doesn't cover grid
 
 
 class Snake:
@@ -109,17 +110,23 @@ class Snake:
         self.y.append(-1)
 
     def draw(self):
-        self.parent_screen.blit(self.head_block, (self.x[0] + 1, self.y[0] + 1))  # draw head + 1 to not cover the grid
-        for i in range(1, self.length - 1, 2):  # every other normal
+        # snake head
+        self.parent_screen.blit(self.head_block, (self.x[0] + 1, self.y[0] + 1))  # x, y + 1 to not cover the grid
+
+        # Blocks alternate colors every other
+        for i in range(1, self.length - 1, 2):
             if self.direction == 'left' or self.direction == 'right':  # WIP change block image to show shape of snake
-                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
             else:
-                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
+
         for i in range(2, self.length - 1, 2): # every other block
             if self.direction == 'left' or self.direction == 'right':
-                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
             else:
-                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
+                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
+
+        # snake tail
         self.parent_screen.blit(self.tail_block, (self.x[self.length - 1], self.y[self.length - 1]))  # draw tail
 
     def move_left(self):
@@ -152,7 +159,6 @@ class Snake:
 
 
 class ScoreBoard:
-
     def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
         self.current_score = length
@@ -383,7 +389,7 @@ class Game:
     def pause_game(self):
         font = pygame.font.SysFont('arial', 50, bold=True)
         title = font.render(f"PAUSED", True, WHITE)
-        self.surface.blit(title, (400, 450))
+        self.surface.blit(title, (420, 350))
         pygame.display.update()
 
     def change_speed_reset(self, speed):
