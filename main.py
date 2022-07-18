@@ -92,6 +92,7 @@ class Apple:
 
 
 class Snake:
+    # every other block of the snake changes color
     def __init__(self, parent_screen, length, block_size):
         self.odd_block = pygame.image.load("resources/odd_block.jpg").convert()
         self.even_block = pygame.image.load("resources/even_block.jpg").convert()
@@ -115,16 +116,9 @@ class Snake:
 
         # Blocks alternate colors every other
         for i in range(1, self.length - 1, 2):
-            if self.direction == 'left' or self.direction == 'right':  # WIP change block image to show shape of snake
-                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
-            else:
-                self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
-
+            self.parent_screen.blit(self.even_block, (self.x[i], self.y[i]))
         for i in range(2, self.length - 1, 2): # every other block
-            if self.direction == 'left' or self.direction == 'right':
-                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
-            else:
-                self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
+            self.parent_screen.blit(self.odd_block, (self.x[i], self.y[i]))
 
         # snake tail
         self.parent_screen.blit(self.tail_block, (self.x[self.length - 1], self.y[self.length - 1]))  # draw tail
