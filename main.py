@@ -52,6 +52,7 @@ class GameMap:
         self.block_size = block_size
         self.walls = []
         self.map_instance = map_dictionary.MapDictionary(MAX_X, MAX_Y)  # generates map array by loading from map files
+        self.change_map(0)
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
@@ -137,10 +138,11 @@ class Snake:
 
     def walk(self):
 
-        for i in range(self.length - 1, 0, -1):
+        for i in range(self.length - 1, 0, -1):  # move the position of all blocks to previous block, except head
             self.x[i] = self.x[i - 1]
             self.y[i] = self.y[i - 1]
 
+        #  Move the snake head in the current direction
         if self.direction == 'left':
             self.x[0] -= self.block_size
         elif self.direction == 'right':
@@ -227,7 +229,6 @@ class Game:
         self.wall = Wall(self.surface)
         self.current_map = 0
         self.game_map = GameMap(self.block_size)
-        self.game_map.change_map(self.current_map)
         self.draw_map()
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = False
