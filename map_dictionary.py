@@ -13,11 +13,13 @@ class MapDictionary:
             1: self.equality(),
             2: self.load_map_file("cross.txt"),
             3: self.load_map_file("corners.txt"),
-            4: self.load_map_file("crosshair.txt")}
+            4: self.load_map_file("crosshair.txt"),
+            5: self.vertigo()
+            }
 
     def map_test(self):
         # test map for debugging, nearly full of walls
-        test_map = np.ones((self.max_x + 1, self.max_y + 1), dtype=np.uint8)
+        test_map = np.ones((self.max_y + 1, self.max_x + 1), dtype=np.uint8)
 
         test_map[1:-1, 1:self.max_y // 2 + 2] = 0  # build the top half of the walls
         test_map[15:-1, self.max_y // 2 - 2: self.max_y // 2 + 2] = 1  # build the middle right side of walls
@@ -30,7 +32,14 @@ class MapDictionary:
         return map_walls
 
     def equality(self):
-        map_walls = np.ones((self.max_x + 1, self.max_y + 1), dtype=np.uint8)
+        map_walls = np.ones((self.max_y + 1, self.max_x + 1), dtype=np.uint8)
+        map_walls[1:-1, 1:-1] = 0
+        map_walls[self.max_y // 3, 5:-5] = 1
+        map_walls[-self.max_y // 3, 5:-5] = 1
+        return map_walls
+
+    def vertigo(self):
+        map_walls = np.ones((self.max_y + 1, self.max_x + 1), dtype=np.uint8)
         map_walls[1:-1, 1:-1] = 0
         map_walls[5:-5, self.max_y // 3] = 1
         map_walls[5:-5, -self.max_y // 3] = 1
