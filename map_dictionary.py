@@ -12,9 +12,10 @@ class MapDictionary:
             0: self.blank_map(),
             1: self.equality(),
             2: self.load_map_file("cross.txt"),
-            3: self.load_map_file("corners.txt"),
+            3: self.load_map_file("vortex.txt"),
             4: self.load_map_file("crosshair.txt"),
-            5: self.vertigo()
+            5: self.vertigo(),
+            6: self.load_map_file("zigZagChallenge.txt")
             }
 
     def map_test(self):
