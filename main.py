@@ -58,7 +58,7 @@ class GameMap:
         walls_x, walls_y = np.nonzero(map_blueprint)
         walls_y *= self.block_size
         walls_x *= self.block_size
-        self.walls = list(zip(walls_y,walls_x))
+        self.walls = list(zip(walls_y, walls_x))
 
     def change_map(self, selected_map):
         current_map_blueprint = self.map_instance.map_dict.get(selected_map)
