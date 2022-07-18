@@ -23,7 +23,7 @@ This is one of my favorite games, so enjoy!
 Menu Controls:
 
 Choose your difficulty:
-1 = Slow   2 = Medium   3 = Fast   0 = Impossible.
+1 = Slow | 2 = Medium | 3 = Fast | 0 = Impossible
 
 Enter = Play/Pause/Resume Game
 
@@ -35,14 +35,17 @@ A = Change Maps (Press A to cycle through maps, in menu only)
 
 Map 1 = Classic
 
-Map 2 = Equality (Pictured Below)
+Map 2 = Equality
 
 Map 3 = Cross
 
-Map 4 = Corners
+Map 4 = Vortex
 
 Map 5 = Crosshair
 
+Map 6 = Vertigo
+
+Map 7 = Zig Zag Challenge (Extremely difficult)
 
 
 ---------------------------------------------------
@@ -66,4 +69,5 @@ Good Luck, and have fun!
 Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 
 
-![Snake Gameplay](/resources/snake_gameplay.jpg "Snake Gameplay")
+![Snake Gameplay](/resources/gameplay1.gif "Snake Gameplay")
+![Snake Gameplay](/resources/gameplayVortex.gif "Vortex")
