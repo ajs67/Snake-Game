@@ -17,7 +17,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # add mouse interface in menu
 # add bonus timer snacks worth extra points
 # add separate high scores for each map
-# Fix map file transposing when loaded into game (so it can be edited not transposed)
+# save high scores to a database
 # add 2 player support
 # host application online, save a record of high score of all players
 # fix game win crash
@@ -323,7 +323,7 @@ class Game:
 
     def draw_grid(self):
         for x in range(0, WINDOW_WIDTH, self.block_size):
-            for y in range(0, WINDOW_WIDTH, self.block_size):
+            for y in range(0, WINDOW_HEIGHT, self.block_size):
                 rect = pygame.Rect(x, y, self.block_size, self.block_size)
                 pygame.draw.rect(self.surface, BLACK, rect, 1)
 
