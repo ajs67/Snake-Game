@@ -2,7 +2,7 @@
 
 Snake: Programmed by Alexander Schwartz
 ---------------------------------------------------
-
+![Snake Gameplay](/resources/gameplayAll.gif "All Maps")
 
 Based on the classic Snake game, this game was designed in python using Pygame and NumPy libraries.
 
@@ -71,4 +71,3 @@ Programmed using python and pygame library by Alexander Schwartz "Just for fun"
 
 ![Snake Gameplay](/resources/gameplay1.gif "Snake Gameplay")
 ![Snake Gameplay](/resources/gameplayVortex.gif "Vortex")
-![Snake Gameplay](/resources/gameplayAll.gif "All Maps")
