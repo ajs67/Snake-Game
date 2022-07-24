@@ -23,15 +23,13 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
 # Implement Multithreading to improve performance. (It seems like game clock slows down randomly)
-# Speed and resource optimization, performance is slightly worse when snake is very long
+# Speed and resource optimization, improve performance when snake is very long
 # Separate scoreboard and score calculation classes
 
 
 import pygame
 from pygame.locals import *
-import random as r
 import numpy as np
-import os
 import map_dictionary
 from food import *
 from snake import *
