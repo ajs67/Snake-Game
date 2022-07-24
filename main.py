@@ -95,10 +95,11 @@ class Game:
         self.game_map = GameMap(self.block_size)
         self.draw_map()
         self.apple = Apple(self.surface, self.block_size)
-        self.apple_valid = False
+        self.food_valid = False
         self.valid_food_move(self.apple)
         self.apple.draw()
         self.star = Star(self.surface, self.block_size)
+        self.bonus_count = 0
         self.render_background()
         self.refresh_count = 0
         self.change_direction = False
@@ -123,13 +124,14 @@ class Game:
         if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
             self.play_sound('ding')
             self.snake.increase_length()
-            self.apple_valid = False
+            self.food_valid = False
             self.valid_food_move(self.apple)
+        self.bonus_count += 1
 
     def valid_food_move(self, food):
-        while not self.apple_valid:  # move apple until it's not placed inside snake
+        while not self.food_valid:  # move apple until it's not placed inside snake
             food.move()
-            self.apple_valid = self.is_food_valid(food)
+            self.food_valid = self.is_food_valid(food)
 
     def is_food_valid(self, food):
         for i in range(self.snake.length):
@@ -147,6 +149,9 @@ class Game:
         if apples eaten = 7, call draw star, activate bonus timer.
         :return:
         """
+        pass
+
+    def activate_bonus(self):
         pass
 
     def draw_map(self):
@@ -185,8 +190,9 @@ class Game:
     def reset(self):
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.apple = Apple(self.surface, self.block_size)
-        self.apple_valid = 0
+        self.food_valid = 0
         self.valid_food_move(self.apple)
+        self.bonus_count = 0
 
     def play_sound(self, sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
