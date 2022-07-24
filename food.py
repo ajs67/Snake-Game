@@ -7,8 +7,8 @@ class Food:
         self.image = pygame.image.load(self.image_file).convert()
         self.parent_screen = parent_screen
         self.block_size = block_size
-        self.x = 0
-        self.y = 0
+        self.x = 10*40
+        self.y = 10*40
 
     @property
     def image_file(self):
@@ -20,6 +20,10 @@ class Food:
 
     def draw(self):
         self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # pos + 1 to position, so it doesn't cover grid
+
+    def remove(self):  # place the food outside the game board
+        self.x = -1 * self.block_size
+        self.y = -1 * self.block_size
 
 
 class Apple(Food):
