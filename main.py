@@ -175,6 +175,7 @@ class Game:
 
         if self.bonus_count == 7:
             self.valid_food_move(self.star)
+            self.bonus_count = 0
 
 
     def draw_map(self):
@@ -259,6 +260,7 @@ class Game:
         self.score_board.calculate_score(self.snake.length)
         self.score_board.draw()
         self.eat()
+        self.activate_bonus()
         pygame.display.update()
 
     def menu(self):
@@ -343,6 +345,7 @@ class Game:
                                 self.current_map = 0
                             self.game_map.change_map(self.current_map)
                             self.draw_map()
+                            self.reset()
 
                     else:
 
