@@ -217,7 +217,7 @@ class Game:
         self.draw_map()
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = False
-        self.valid_apple_move()
+        self.valid_food_move(self.apple)
         self.apple.draw()
         self.star = Star(self.surface, self.block_size)
         self.render_background()
@@ -245,18 +245,18 @@ class Game:
             self.play_sound('ding')
             self.snake.increase_length()
             self.apple_valid = False
-            self.valid_apple_move()
+            self.valid_food_move(self.apple)
 
-    def valid_apple_move(self):
+    def valid_food_move(self, food):
         while not self.apple_valid:  # move apple until it's not placed inside snake
-            self.apple.move()
-            self.apple_valid = self.is_apple_valid()
+            food.move()
+            self.apple_valid = self.is_food_valid(food)
 
-    def is_apple_valid(self):
+    def is_food_valid(self, food):
         for i in range(self.snake.length):
-            if self.is_collision(self.apple.x, self.apple.y, self.snake.x[i], self.snake.y[i]):  # apple is inside snake
+            if self.is_collision(food.x, food.y, self.snake.x[i], self.snake.y[i]):  # apple is inside snake
                 return False
-        if (self.apple.x, self.apple.y) in self.game_map.walls:  # if apple is inside the walls
+        if (food.x, food.y) in self.game_map.walls:  # if apple is inside the walls
             return False
         return True
 
@@ -307,7 +307,7 @@ class Game:
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = 0
-        self.valid_apple_move()
+        self.valid_food_move(self.apple)
 
     def play_sound(self, sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
