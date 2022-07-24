@@ -37,7 +37,7 @@ import map_dictionary
 
 # block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
-WHITE = (255,255,255)
+WHITE = (255, 255, 255)
 MAX_X = 24
 MAX_Y = 19
 WINDOW_WIDTH = 1000
@@ -91,6 +91,21 @@ class Apple:
     def draw(self):  # draw apple
         self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # pos + 1 to position, so it doesn't cover grid
 
+
+class Star:
+    def __init__(self, parent_screen, block_size):
+        self.image = pygame.image.load("resources/star.jpg").convert()
+        self.parent_screen = parent_screen
+        self.block_size = block_size
+        self.x = 0
+        self.y = 0
+
+    def move(self):
+        self.x = r.randint(1, 23) * self.block_size
+        self.y = r.randint(1, 18) * self.block_size
+
+    def draw(self):
+        self.parent_screen.blit(self.image, (self.x + 1, self.y + 1))  # pos + 1 to position, so it doesn't cover grid
 
 class Snake:
     # every other block of the snake changes color
@@ -273,6 +288,16 @@ class Game:
         if (self.apple.x, self.apple.y) in self.game_map.walls:  # if apple is inside the walls
             return False
         return True
+
+    def bonus_timer(self):
+        """
+        The snake bonus star appears after a max of 7 apples are eaten. After 4 are eaten, there a random number
+        0-4 is added to the timer.
+        if apples eaten = 4, then add randint(0,4).
+        if apples eaten = 7, call draw star, activate bonus timer.
+        :return:
+        """
+        pass
 
     def draw_map(self):
         for wall_xy in self.game_map.walls:
