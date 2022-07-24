@@ -95,10 +95,11 @@ class Game:
         self.game_map = GameMap(self.block_size)
         self.draw_map()
         self.apple = Apple(self.surface, self.block_size)
-        self.food_valid = False
+        self.apple_valid = False
         self.valid_food_move(self.apple)
         self.apple.draw()
         self.star = Star(self.surface, self.block_size)
+        self.star_valid = False
         self.bonus_count = 0
         self.render_background()
         self.refresh_count = 0
@@ -120,18 +121,29 @@ class Game:
         return False
 
     def eat(self):
-        # snake collides with apple
-        if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
-            self.play_sound('ding')
-            self.snake.increase_length()
-            self.food_valid = False
-            self.valid_food_move(self.apple)
-        self.bonus_count += 1
+        # snake collides with food
+        for food in [self.apple, self.star]:
+            if self.is_collision(self.snake.x[0], self.snake.y[0], food.x, food.y):
+                self.play_sound('ding')
+                self.snake.increase_length()
+
+                self.bonus_count += 1
+                if isinstance(food, Apple):
+                    self.apple_valid = False
+                    self.valid_food_move(food)
+                elif isinstance(food, Star):
+                    self.star_valid = False
+                    food.remove()
 
     def valid_food_move(self, food):
-        while not self.food_valid:  # move apple until it's not placed inside snake
-            food.move()
-            self.food_valid = self.is_food_valid(food)
+        if food == self.apple:
+            while not self.apple_valid:  # move apple until it's not placed inside snake or star
+                food.move()
+                self.apple_valid = self.is_food_valid(food)
+        elif food == self.star:
+            while not self.star_valid:  # move star until it's not placed inside snake or apple
+                food.move()
+                self.star_valid = self.is_food_valid(food)
 
     def is_food_valid(self, food):
         for i in range(self.snake.length):
@@ -139,6 +151,12 @@ class Game:
                 return False
         if (food.x, food.y) in self.game_map.walls:  # if apple is inside the walls
             return False
+        elif isinstance(food, Apple):
+            pass#if self.is_collision(food.x, food.y, self.star.x, self.star.y):  # apple inside star
+            #    return False
+        elif isinstance(food, Star):
+            if self.is_collision(food.x, food.y, self.apple.x, self.apple.y):  # star inside apple
+                return False
         return True
 
     def bonus_timer(self):
@@ -152,7 +170,12 @@ class Game:
         pass
 
     def activate_bonus(self):
-        pass
+        if self.bonus_count == 4:
+            self.bonus_count += r.randint(0, 4)  # the bonus spawns after a random number of times based on this
+
+        if self.bonus_count == 7:
+            self.valid_food_move(self.star)
+
 
     def draw_map(self):
         for wall_xy in self.game_map.walls:
@@ -190,7 +213,7 @@ class Game:
     def reset(self):
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.apple = Apple(self.surface, self.block_size)
-        self.food_valid = 0
+        self.apple_valid = 0
         self.valid_food_move(self.apple)
         self.bonus_count = 0
 
