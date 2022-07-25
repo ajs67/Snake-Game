@@ -96,10 +96,10 @@ class Game:
         self.draw_map()
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = False
-        self.valid_food_move(self.apple)
-        self.apple.draw()
         self.star = Star(self.surface, self.block_size)
         self.star_valid = False
+        self.valid_food_move(self.apple)
+        self.apple.draw()
         self.bonus_count = 0
         self.render_background()
         self.refresh_count = 0
@@ -152,8 +152,8 @@ class Game:
         if (food.x, food.y) in self.game_map.walls:  # if apple is inside the walls
             return False
         elif isinstance(food, Apple):
-            pass#if self.is_collision(food.x, food.y, self.star.x, self.star.y):  # apple inside star
-            #    return False
+            if self.is_collision(food.x, food.y, self.star.x, self.star.y):  # apple inside star
+                return False
         elif isinstance(food, Star):
             if self.is_collision(food.x, food.y, self.apple.x, self.apple.y):  # star inside apple
                 return False
