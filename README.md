@@ -62,6 +62,10 @@ Enter = Pause
 
 You increase your score by eating more apples, as you eat more apples, the snake becomes longer.
 
+Every few apples you eat, a bonus star worth extra points appears... 
+
+But it only lasts a limited time, so quickly catch it.
+
 Good Luck, and have fun!
 ---------------------------------------------------
 
