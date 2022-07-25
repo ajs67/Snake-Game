@@ -215,6 +215,8 @@ class Game:
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = 0
+        self.star_valid = False
+        self.star.remove()
         self.valid_food_move(self.apple)
         self.bonus_count = 0
 
