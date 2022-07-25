@@ -82,6 +82,7 @@ class Game:
         self.valid_food_move(self.apple)
         self.apple.draw()
         self.bonus_count = 0
+        self.bonus_timer = -1
         self.render_background()
         self.refresh_count = 0
         self.change_direction = False
@@ -142,8 +143,31 @@ class Game:
                 return False
         return True
 
-    def bonus_timer(self):
+    def display_bonus_timer(self):
         pass
+
+    def bonus_timer_on(self):
+        if self.bonus_timer >= 0:
+            return True
+        else:
+            return False
+
+    def bonus_timer_off(self):
+        self.bonus_timer = -1
+        self.expire_bonus()
+        # turn off display
+
+    def tick_bonus_timer(self):
+        self.bonus_timer -= 1
+        self.display_bonus_timer()  # turn on timer display
+
+        if self.bonus_timer < 0:
+            self.bonus_timer_off()
+
+    def expire_bonus(self):
+        """ When the timer runs out, the bonus disappears"""
+        self.star.remove()
+        self.bonus_timer_off()
 
     def activate_bonus(self):
         """
@@ -156,10 +180,8 @@ class Game:
         if self.bonus_count >= 7:
             self.valid_food_move(self.star)
             self.bonus_count = 0
-
-    def bonus_expire(self):
-        """ When the timer runs out, the bonus disappears"""
-        self.star.remove()
+            self.bonus_timer = 40
+            self.bonus_timer_on()
 
     def draw_map(self):
         for wall_xy in self.game_map.walls:
@@ -202,6 +224,7 @@ class Game:
         self.star.remove()
         self.valid_food_move(self.apple)
         self.bonus_count = 0
+        self.bonus_timer = -1
 
     def play_sound(self, sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
@@ -245,7 +268,12 @@ class Game:
         self.score_board.calculate_score(self.snake.length)
         self.score_board.draw()
         self.eat()
-        self.activate_bonus()
+        if self.bonus_timer_on():
+            self.tick_bonus_timer()
+        else:
+            self.activate_bonus()
+
+
         pygame.display.update()
 
     def menu(self):
