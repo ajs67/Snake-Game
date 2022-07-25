@@ -125,6 +125,7 @@ class Game:
                 food.move()
                 self.apple_valid = self.is_food_valid(food)
         elif food == self.star:
+            print("valid_star_move")
             while not self.star_valid:  # move star until it's not placed inside snake or apple
                 food.move()
                 self.star_valid = self.is_food_valid(food)
@@ -167,6 +168,7 @@ class Game:
     def expire_bonus(self):
         """ When the timer runs out, the bonus disappears"""
         self.star.remove()
+        self.star_valid = False
 
     def activate_bonus(self):
         """
@@ -180,7 +182,6 @@ class Game:
             self.valid_food_move(self.star)
             self.bonus_count = 0
             self.bonus_timer = 40
-            self.bonus_timer_on()
 
     def draw_map(self):
         for wall_xy in self.game_map.walls:
@@ -269,9 +270,7 @@ class Game:
         self.eat()
         if self.bonus_timer_on():
             self.tick_bonus_timer()
-        else:
-            self.activate_bonus()
-
+        self.activate_bonus()
 
         pygame.display.update()
 
