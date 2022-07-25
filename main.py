@@ -167,7 +167,6 @@ class Game:
     def expire_bonus(self):
         """ When the timer runs out, the bonus disappears"""
         self.star.remove()
-        self.bonus_timer_off()
 
     def activate_bonus(self):
         """
