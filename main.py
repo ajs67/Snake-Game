@@ -160,16 +160,13 @@ class Game:
         return True
 
     def bonus_timer(self):
-        """
-        The snake bonus star appears after a max of 7 apples are eaten. After 4 are eaten, there a random number
-        0-4 is added to the timer.
-        if apples eaten = 4, then add randint(0,4).
-        if apples eaten = 7, call draw star, activate bonus timer.
-        :return:
-        """
         pass
 
     def activate_bonus(self):
+        """
+        The snake bonus star appears after a max of 7 apples are eaten. After 4 are eaten, there a random number
+        0-4 is added to the timer.
+        """
         if self.bonus_count == 4:
             self.bonus_count += r.randint(0, 4)  # the bonus spawns after a random number of times based on this
 
@@ -177,6 +174,9 @@ class Game:
             self.valid_food_move(self.star)
             self.bonus_count = 0
 
+    def bonus_expire(self):
+        """ When the timer runs out, the bonus disappears"""
+        self.star.remove()
 
     def draw_map(self):
         for wall_xy in self.game_map.walls:
@@ -214,7 +214,7 @@ class Game:
     def reset(self):
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.apple = Apple(self.surface, self.block_size)
-        self.apple_valid = 0
+        self.apple_valid = False
         self.star_valid = False
         self.star.remove()
         self.valid_food_move(self.apple)
