@@ -15,7 +15,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # make snake movement smoother
 # improve snake block images
 # add mouse interface in menu
-# add bonus timer snacks worth extra points
+# add bonus timer display
 # add separate high scores for each map
 # save high scores to a database
 # add 2 player support
@@ -27,7 +27,6 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # Separate scoreboard and score calculation classes
 
 
-import pygame
 from pygame.locals import *
 
 from food import *
@@ -200,7 +199,7 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
                 self.play_sound("crash")
                 raise "Game Over"
-        if self.snake.length - 2 >= ((MAX_Y + 1) * (MAX_X + 1) - len(self.game_map.walls)): # WIP fix game win crash
+        if self.snake.length - 2 >= ((MAX_Y + 1) * (MAX_X + 1) - len(self.game_map.walls)):  # WIP fix game win crash
             self.play_sound("ding")
             print("You WON!!!")
             raise "You WON!!!"
