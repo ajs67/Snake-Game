@@ -125,7 +125,6 @@ class Game:
                 food.move()
                 self.apple_valid = self.is_food_valid(food)
         elif food == self.star:
-            print("valid_star_move")
             while not self.star_valid:  # move star until it's not placed inside snake or apple
                 food.move()
                 self.star_valid = self.is_food_valid(food)
