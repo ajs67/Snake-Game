@@ -7,8 +7,8 @@ class Food:
         self.image = pygame.image.load(self.image_file).convert()
         self.parent_screen = parent_screen
         self.block_size = block_size
-        self.x = 10*40
-        self.y = 10*40
+        self.x = -1*40
+        self.y = -1*40
 
     @property
     def image_file(self):
