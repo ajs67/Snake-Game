@@ -132,6 +132,8 @@ class Game:
                     self.apple_valid = False
                     self.valid_food_move(food)
                 elif isinstance(food, Star):
+                    self.play_sound('ding')  # double ding for bonus sounds different
+                    self.snake.increase_length()  # bonus length
                     self.star_valid = False
                     food.remove()
 
@@ -170,7 +172,7 @@ class Game:
         if self.bonus_count == 4:
             self.bonus_count += r.randint(0, 4)  # the bonus spawns after a random number of times based on this
 
-        if self.bonus_count == 7:
+        if self.bonus_count >= 7:
             self.valid_food_move(self.star)
             self.bonus_count = 0
 
