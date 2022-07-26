@@ -16,6 +16,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # improve snake block images
 # add mouse interface in menu
 # add bonus timer display
+# Add display text for current map and speed settings
 # add separate high scores for each map
 # save high scores to a database
 # add 2 player support
@@ -33,7 +34,7 @@ from food import *
 from snake import *
 from ScoreBoard import *
 from GameMap import *
-
+from Wall import *
 
 # block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
@@ -44,17 +45,6 @@ WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 800
 LENGTH_OF_SNAKE = 4
 MEDIUM_SPEED = 9
-
-
-class Wall:
-    def __init__(self, parent_screen):
-        self.wall = pygame.image.load("resources/wall.jpg").convert()
-        self.parent_screen = parent_screen
-        self.x = 0
-        self.y = 0
-
-    def draw(self, xy):  # (x, y) packed as a tuple
-        self.parent_screen.blit(self.wall, xy)  # draw wall block image
 
 
 class Game:
