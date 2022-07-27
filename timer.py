@@ -15,7 +15,6 @@ class TimerDisplay:
         self.time = current_time
         if self.time >= 0:
             self.draw()
-        print(self.time)
 
     def draw(self):
         time_remaining = self.font.render(f"Bonus Time: {self.time}", True, WHITE)
