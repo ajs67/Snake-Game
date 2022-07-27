@@ -35,6 +35,7 @@ from snake import *
 from ScoreBoard import *
 from GameMap import *
 from Wall import *
+from timer import *
 
 # block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
@@ -76,6 +77,7 @@ class Game:
         self.refresh_count = 0
         self.change_direction = False
         self.score_board = ScoreBoard(self.surface, self.snake.length, LENGTH_OF_SNAKE)
+        self.timer_display = TimerDisplay(self.surface, self.bonus_timer)
 
         self.mute = 0
         self.menu()
@@ -107,6 +109,7 @@ class Game:
                     self.snake.increase_length()  # bonus length
                     self.star_valid = False
                     food.remove()
+                    self.bonus_timer_off()
 
     def valid_food_move(self, food):
         if food == self.apple:
@@ -132,14 +135,8 @@ class Game:
                 return False
         return True
 
-    def display_bonus_timer(self):
-        pass
-
     def bonus_timer_on(self):
-        if self.bonus_timer >= 0:
-            return True
-        else:
-            return False
+        return True if self.bonus_timer >= 0 else False
 
     def bonus_timer_off(self):
         self.bonus_timer = -1
@@ -148,9 +145,9 @@ class Game:
 
     def tick_bonus_timer(self):
         self.bonus_timer -= 1
-        self.display_bonus_timer()  # turn on timer display
+        self.timer_display.display(self.bonus_timer)  # turn on timer display
 
-        if self.bonus_timer < 0:
+        if self.bonus_timer <= 0:
             self.bonus_timer_off()
 
     def expire_bonus(self):
