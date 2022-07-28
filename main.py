@@ -15,7 +15,6 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # make snake movement smoother
 # improve snake block images
 # add mouse interface in menu
-# add bonus timer display
 # Add display text for current map and speed settings
 # add separate high scores for each map
 # save high scores to a database
