@@ -96,15 +96,15 @@ class Game:
         # snake collides with food
         for food in [self.apple, self.star]:
             if self.is_collision(self.snake.x[0], self.snake.y[0], food.x, food.y):
-                self.play_sound('ding')
                 self.snake.increase_length()
 
                 self.bonus_count += 1
                 if isinstance(food, Apple):
                     self.apple_valid = False
+                    self.play_sound('ding')
                     self.valid_food_move(food)
                 elif isinstance(food, Star):
-                    self.play_sound('ding')  # double ding for bonus sounds different
+                    self.play_sound('bonus_ding')
                     self.snake.increase_length()  # bonus length
                     self.star_valid = False
                     food.remove()
@@ -171,22 +171,25 @@ class Game:
         for wall_xy in self.game_map.walls:
             self.wall.draw(wall_xy)
 
+    def sfx_game_over(self):
+        return self.play_sound("pixel_death")
+
     def is_game_over(self):
         # snake collides with itself
         for i in range(3, self.snake.length):
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
-                self.play_sound("crash")
+                self.sfx_game_over()
                 raise "Game Over"
         if not ((self.block_size <= self.snake.x[0] <= (MAX_X * self.block_size)) and (self.block_size <= self.snake.y[0] <= (MAX_Y * self.block_size))):
-            self.play_sound("crash")
+            self.sfx_game_over()
             raise "Hit The Boundaries"
 
         for square in self.game_map.walls:  # if collision with walls
-            if self.is_collision(self.snake.x[0], self.snake.y[0], square[0],square[1]):
-                self.play_sound("crash")
+            if self.is_collision(self.snake.x[0], self.snake.y[0], square[0], square[1]):
+                self.sfx_game_over()
                 raise "Game Over"
         if self.snake.length - 2 >= ((MAX_Y + 1) * (MAX_X + 1) - len(self.game_map.walls)):  # WIP fix game win crash
-            self.play_sound("ding")
+            self.play_sound("bonus_ding")
             print("You WON!!!")
             raise "You WON!!!"
 
@@ -215,7 +218,7 @@ class Game:
         pygame.mixer.Sound.play(sound)
 
     def play_bg_music(self):
-        pygame.mixer.music.load("resources/bg_music_1.mp3")
+        pygame.mixer.music.load("resources/Brilliant_notes.mp3")
         pygame.mixer.music.play()
 
     def draw_grid(self):
