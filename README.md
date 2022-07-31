@@ -17,10 +17,35 @@ High score gets saved locally into the resources folder. If you want to reset, y
 
 I am working towards launching this game as a scalable web app online to support multiplayer competitions.
 
-This is one of my favorite games, so enjoy!
+This is one of my favorite games! Enjoy!
+
+---------------------------------------------------
+How to Run:
 ---------------------------------------------------
 
+To run this program you must have python 3.10 installed on your system.
+
+**Method 1: Clone git repository**
+
+1.) Create a new folder in the desired directory
+
+2.) Navigate to the directory in command prompt
+
+3.) Enter command: git clone https://github.com/ajs67/Snake-Game.git
+
+4.) From command prompt inside directory enter command: python main.py
+
+**Method 2: Download Zip**
+
+1.) Click on "Code" button in upper right corner of this page, and then click "Download Zip"
+
+2.) Unzip the files
+
+3.) Open directory in command prompt and enter command: python main.py
+
+---------------------------------------------------
 Menu Controls:
+---------------------------------------------------
 
 Choose your difficulty:
 1 = Slow | 2 = Medium | 3 = Fast | 0 = Impossible
@@ -49,8 +74,8 @@ Map 7 = Zig Zag Challenge (Extremely difficult)
 
 
 ---------------------------------------------------
-
 In game controls:
+---------------------------------------------------
 
 M = Mute Music
 
@@ -70,8 +95,7 @@ Good Luck, and have fun!
 ---------------------------------------------------
 
 
-Programmed using python and pygame library by Alexander Schwartz "Just for fun"
+Programmed using python and pygame library by Alexander Schwartz
 
 
 ![Snake Gameplay](/resources/gameplay1.gif "Snake Gameplay")
-![Snake Gameplay](/resources/gameplayVortex.gif "Vortex")
