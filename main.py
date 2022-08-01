@@ -26,6 +26,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # Speed and resource optimization, improve performance when snake is very long
 # Separate scoreboard and score calculation classes
 # Add map name and speed text at bottom of screen
+# Add event queue for changing directions, log the first 2 or 3 keystrokes and execute the next one in game.play
 
 
 from pygame.locals import *
