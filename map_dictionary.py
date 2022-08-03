@@ -17,6 +17,15 @@ class MapDictionary:
             5: self.vertigo(),
             6: self.load_map_file("zigZagChallenge.txt")
             }
+        self.map_names = {
+            0: "Classic",
+            1: "Equality",
+            2: "Cross",
+            3: "Vortex",
+            4: "Crosshair",
+            5: "Vertigo",
+            6: "ZigZag Challenge"
+        }
 
     def map_test(self):
         # test map for debugging, nearly full of walls
