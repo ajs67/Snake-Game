@@ -61,15 +61,18 @@ class Game:
         pygame.mixer.init()
         self.play_bg_music()
         self.clock_speed = MEDIUM_SPEED  # default medium
+        self.update_speed_info()
         self.block_size = 40  # blocks are 40x40 pixels
 
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.snake = Snake(self.surface, LENGTH_OF_SNAKE, self.block_size)
         self.snake.draw()
+
         self.wall = Wall(self.surface)
         self.current_map = 0
         self.game_map = GameMap(self.block_size)
         self.draw_map()
+
         self.apple = Apple(self.surface, self.block_size)
         self.apple_valid = False
         self.star = Star(self.surface, self.block_size)
@@ -78,9 +81,11 @@ class Game:
         self.apple.draw()
         self.bonus_count = 0
         self.bonus_timer = -1
+
         self.render_background()
         self.refresh_count = 0
         self.change_direction = False
+
         self.score_board = ScoreBoard(self.surface, self.snake.length, LENGTH_OF_SNAKE)
         self.timer_display = TimerDisplay(self.surface, self.bonus_timer)
         self.default_font = pygame.font.SysFont('arial', 30)
@@ -234,10 +239,14 @@ class Game:
                 pygame.draw.rect(self.surface, BLACK, rect, 1)
 
     def draw_map_info(self):
-        info_map = self.default_font.render(f"Score: {self.}", True, WHITE)
-        self.surface.blit(info_map, (300, 600))
+        info_map = self.default_font.render(f"Map: {self.game_map.current_map_name}", True, WHITE)
+        self.surface.blit(info_map, (300, 200))
 
     def draw_speed_info(self):
+        info_speed = self.default_font.render(f"Speed: {self.speed_info}: {self.clock_speed}", True, WHITE)
+        self.surface.blit(info_speed, (40, 200))
+
+    def update_speed_info(self):
         if self.clock_speed < SLOW_SPEED:
             speed = "Very Slow"
         elif self.clock_speed < MEDIUM_SPEED:
@@ -248,8 +257,7 @@ class Game:
             speed = "Fast"
         else:
             speed = "Impossible"
-        info_speed = self.default_font.render(f"Speed: {speed}: {self.clock_speed}", True, WHITE)
-        self.surface.blit(info_speed, (40, 600))
+        self.speed_info = speed
 
     def render_background(self):
         bg = pygame.image.load("resources/background.jpg")
@@ -318,6 +326,7 @@ class Game:
 
     def change_speed_reset(self, speed):
         self.clock_speed = speed
+        self.update_speed_info()
         self.reset()
 
     def run(self):
