@@ -13,7 +13,7 @@ class GameMap:
         self.walls = []
         self.map_instance = map_dictionary.MapDictionary(MAX_X, MAX_Y)  # generates map array by loading from map files
         self.change_map(0)
-        self.current_map = self.map_instance.names_of_maps[0]
+        self.current_map_name = self.map_instance.names_of_maps[0]
 
     def build_map(self, map_blueprint):
         walls_x, walls_y = np.nonzero(map_blueprint)
@@ -23,5 +23,5 @@ class GameMap:
 
     def change_map(self, selected_map):
         current_map_blueprint = self.map_instance.map_dict.get(selected_map)
-        self.current_map = self.map_instance.names_of_maps[selected_map]
+        self.current_map_name = self.map_instance.names_of_maps[selected_map]
         self.build_map(current_map_blueprint)
