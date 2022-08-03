@@ -17,7 +17,7 @@ class MapDictionary:
             5: self.vertigo(),
             6: self.load_map_file("zigZagChallenge.txt")
             }
-        self.map_names = {
+        self.names_of_maps = {
             0: "Classic",
             1: "Equality",
             2: "Cross",
