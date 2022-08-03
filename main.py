@@ -229,6 +229,12 @@ class Game:
                 rect = pygame.Rect(x, y, self.block_size, self.block_size)
                 pygame.draw.rect(self.surface, BLACK, rect, 1)
 
+    def draw_current_game_info(self):
+        font = pygame.font.SysFont('arial', 30)
+        score = font.render(f"Score: {self.}", True, WHITE)
+        self.parent_screen.blit(score, (600, 0))
+        self.draw_high_score()
+
     def render_background(self):
         bg = pygame.image.load("resources/background.jpg")
         self.surface.blit(bg, (0, 0))
