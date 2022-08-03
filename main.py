@@ -83,6 +83,7 @@ class Game:
         self.change_direction = False
         self.score_board = ScoreBoard(self.surface, self.snake.length, LENGTH_OF_SNAKE)
         self.timer_display = TimerDisplay(self.surface, self.bonus_timer)
+        self.default_font = pygame.font.SysFont('arial', 30)
 
         self.mute = 0
         self.menu()
@@ -201,11 +202,10 @@ class Game:
 
     def show_game_over(self):
         self.render_background()
-        font = pygame.font.SysFont('arial', 30)
         self.score_board.calculate_score(self.snake.length)
         self.score_board.show_score_banner()
 
-        line2 = font.render("To play again, press Enter. To Exit, press Escape", True, WHITE)
+        line2 = self.default_font.render("To play again, press Enter. To Exit, press Escape", True, WHITE)
         self.surface.blit(line2, (200, 350))
         pygame.display.update()
 
@@ -233,13 +233,23 @@ class Game:
                 rect = pygame.Rect(x, y, self.block_size, self.block_size)
                 pygame.draw.rect(self.surface, BLACK, rect, 1)
 
-    def draw_current_game_info(self):
-        font = pygame.font.SysFont('arial', 30)
-        info_map = font.render(f"Score: {self.}", True, WHITE)
+    def draw_map_info(self):
+        info_map = self.default_font.render(f"Score: {self.}", True, WHITE)
         self.surface.blit(info_map, (300, 600))
-        if self.clock_speed <
-        info_speed = font.render(f"Score: {self.}", True, WHITE)
-        self.surface.blit(info_speed, (100, 600))
+
+    def draw_speed_info(self):
+        if self.clock_speed < SLOW_SPEED:
+            speed = "Very Slow"
+        elif self.clock_speed < MEDIUM_SPEED:
+            speed = "Slow"
+        elif self.clock_speed < FAST_SPEED:
+            speed = "Medium"
+        elif self.clock_speed < IMPOSSIBLE_SPEED:
+            speed = "Fast"
+        else:
+            speed = "Impossible"
+        info_speed = self.default_font.render(f"Speed: {speed}: {self.clock_speed}", True, WHITE)
+        self.surface.blit(info_speed, (40, 600))
 
     def render_background(self):
         bg = pygame.image.load("resources/background.jpg")
@@ -283,7 +293,7 @@ class Game:
         self.surface.blit(title, (400, 150))
         author = font.render(f"by Alexander Schwartz", True, BLACK)
         self.surface.blit(author, (280, 200))
-        font = pygame.font.SysFont('arial', 30)
+        font = self.default_font
         tag_line = font.render(f"Choose your difficulty", True, WHITE)
         self.surface.blit(tag_line, (360, 350))
         speeds = font.render(f"1 = Slow   2 = Medium   3 = Fast   0 = Impossible", True, WHITE)
