@@ -239,12 +239,12 @@ class Game:
                 pygame.draw.rect(self.surface, BLACK, rect, 1)
 
     def draw_map_info(self):
-        info_map = self.default_font.render(f"Map: {self.game_map.current_map_name}", True, WHITE)
-        self.surface.blit(info_map, (300, 200))
+        info_map = self.default_font.render(f"Map :  {self.game_map.current_map_name}", True, WHITE)
+        self.surface.blit(info_map, (325, 760))
 
     def draw_speed_info(self):
-        info_speed = self.default_font.render(f"Speed: {self.speed_info}: {self.clock_speed}", True, WHITE)
-        self.surface.blit(info_speed, (40, 200))
+        info_speed = self.default_font.render(f"Speed : {self.speed_info} :  {self.clock_speed}", True, WHITE)
+        self.surface.blit(info_speed, (45, 760))
 
     def update_speed_info(self):
         if self.clock_speed < SLOW_SPEED:
@@ -290,6 +290,8 @@ class Game:
         if self.bonus_timer_on():
             self.tick_bonus_timer()
         self.activate_bonus()
+        self.draw_map_info()
+        self.draw_speed_info()
 
         pygame.display.update()
 
@@ -399,6 +401,9 @@ class Game:
             try:
                 if not pause:
                     self.play()
+                elif pause:
+                    self.update_speed_info()
+                    self.draw_speed_info()
             except Exception as e:
                 self.show_game_over()
                 self.toggle_music()
