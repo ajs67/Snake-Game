@@ -45,8 +45,12 @@ MAX_X = 24
 MAX_Y = 19
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 800
+
 LENGTH_OF_SNAKE = 4
+SLOW_SPEED = 5
 MEDIUM_SPEED = 9
+FAST_SPEED = 13
+IMPOSSIBLE_SPEED = 20
 
 
 class Game:
@@ -231,9 +235,11 @@ class Game:
 
     def draw_current_game_info(self):
         font = pygame.font.SysFont('arial', 30)
-        score = font.render(f"Score: {self.}", True, WHITE)
-        self.parent_screen.blit(score, (600, 0))
-        self.draw_high_score()
+        info_map = font.render(f"Score: {self.}", True, WHITE)
+        self.surface.blit(info_map, (300, 600))
+        if self.clock_speed <
+        info_speed = font.render(f"Score: {self.}", True, WHITE)
+        self.surface.blit(info_speed, (100, 600))
 
     def render_background(self):
         bg = pygame.image.load("resources/background.jpg")
@@ -329,16 +335,16 @@ class Game:
 
                     if pause:
                         if event.key == K_1:
-                            self.change_speed_reset(5)
+                            self.change_speed_reset(SLOW_SPEED)
                             pause = False
                         elif event.key == K_2:
                             self.change_speed_reset(MEDIUM_SPEED)
                             pause = False
                         elif event.key == K_3:
-                            self.change_speed_reset(13)
+                            self.change_speed_reset(FAST_SPEED)
                             pause = False
                         elif event.key == K_0:
-                            self.change_speed_reset(20)
+                            self.change_speed_reset(IMPOSSIBLE_SPEED)
                             pause = False
                         elif event.key == K_EQUALS:  # Hidden increase speed function
                             self.clock_speed += 1
