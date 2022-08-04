@@ -27,7 +27,7 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # Separate scoreboard and score calculation classes
 # Add score multiplier based on map and speed and display multiplier
 # Add event queue for changing directions, log the first 2 or 3 keystrokes and execute the next one in game.play
-
+# Add noise when the bonus appears
 
 from pygame.locals import *
 
