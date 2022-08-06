@@ -37,6 +37,7 @@ from ScoreBoard import *
 from GameMap import *
 from Wall import *
 from timer import *
+from queue import Queue
 
 # block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
@@ -60,6 +61,7 @@ class Game:
 
         pygame.mixer.init()
         self.play_bg_music()
+        self.event_queue = Queue(maxsize= 3)
         self.clock_speed = MEDIUM_SPEED  # default medium
         self.update_speed_info()
         self.block_size = 40  # blocks are 40x40 pixels
@@ -383,10 +385,10 @@ class Game:
                     else:
 
                         if (event.key == K_UP) & (self.snake.direction != 'down') & (not self.change_direction):
-                            self.snake.move_up()
+                            self.event_queue.put("move up")
                             self.change_direction = True
                         elif (event.key == K_DOWN) & (self.snake.direction != 'up') & (not self.change_direction):
-                            self.snake.move_down()
+                            self.event_queue.put("move down")
                             self.change_direction = True
                         elif (event.key == K_LEFT) & (self.snake.direction != 'right') & (not self.change_direction):
                             self.snake.move_left()
