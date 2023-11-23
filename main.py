@@ -37,6 +37,8 @@ from ScoreBoard import *
 from GameMap import *
 from Wall import *
 from timer import *
+from multiprocessing import Process, Queue
+
 
 # block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
@@ -412,5 +414,18 @@ class Game:
 
 
 if __name__ == "__main__":
+    # Create a multiprocessing Queue to communicate between processes
+    input_queue = Queue()
+
+    # Create a game process
+    #game_process = Process(target=Game(input_queue).run())
+
+    # Start process
+    #game_process.start()
+
+    # Main process to handle user input
+
+
     game = Game()
+
     game.run()
