@@ -37,6 +37,7 @@ from ScoreBoard import *
 from GameMap import *
 from Wall import *
 from timer import *
+from collections import deque
 
 # block image file is 40 x 40 pixels
 BLACK = (0, 0, 0)
@@ -89,6 +90,8 @@ class Game:
         self.score_board = ScoreBoard(self.surface, self.snake.length, LENGTH_OF_SNAKE)
         self.timer_display = TimerDisplay(self.surface, self.bonus_timer)
         self.default_font = pygame.font.SysFont('arial', 30)
+        self.recent_keydown_events = deque(maxlen=5)
+        self.oldest_recent_event = None
 
         self.mute = 0
         self.menu()
@@ -343,6 +346,7 @@ class Game:
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         running = False
+
                     if event.key == K_m:  # toggle mute music
                         self.mute = (1 if self.mute == 0 else 0)
                         self.toggle_music()
@@ -381,6 +385,9 @@ class Game:
                             self.reset()
 
                     else:
+                        # Add the movement events to the queue, but only if they are valid
+                        if len(self.recent_keydown_events) < 5:
+                            self.recent_keydown_events.append(event.key)
 
                         if (event.key == K_UP) & (self.snake.direction != 'down') & (not self.change_direction):
                             self.snake.move_up()
@@ -398,7 +405,12 @@ class Game:
                 elif event.type == QUIT:
                     running = False
 
+                # Pop the oldest element once every frame for movement events
+                if self.recent_keydown_events:
+                    self.oldest_recent_event = self.recent_keydown_events.popleft()
+
             try:
+                # print(str(self.oldest_recent_event))
                 if not pause:
                     self.play()
                 elif pause:
