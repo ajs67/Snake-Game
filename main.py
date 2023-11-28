@@ -333,12 +333,6 @@ class Game:
         self.update_speed_info()
         self.reset()
 
-    def get_event(self, event_queue):
-        pass
-
-    def put_event(self, event_queue):
-        pass
-
     def run(self):
         running = True
         pause = True
@@ -421,11 +415,10 @@ class Game:
 
 if __name__ == "__main__":
     # Create a multiprocessing Queue to communicate between processes
-    # Have a maximum inputs in the queue to prevent overflow
-    input_queue = Queue(maxsize=5)
+    input_queue = Queue()
 
     # Create a game process
-    #game_process = Process(target=Game(input_queue.run())
+    #game_process = Process(target=Game(input_queue).run())
 
     # Start process
     #game_process.start()
