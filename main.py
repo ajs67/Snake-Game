@@ -52,6 +52,7 @@ SLOW_SPEED = 5
 MEDIUM_SPEED = 9
 FAST_SPEED = 13
 IMPOSSIBLE_SPEED = 20
+KEYDOWN_QUEUE_SIZE = 5
 
 
 class Game:
@@ -90,7 +91,7 @@ class Game:
         self.score_board = ScoreBoard(self.surface, self.snake.length, LENGTH_OF_SNAKE)
         self.timer_display = TimerDisplay(self.surface, self.bonus_timer)
         self.default_font = pygame.font.SysFont('arial', 30)
-        self.recent_keydown_events = deque(maxlen=5)
+        self.recent_keydown_events = deque(maxlen=KEYDOWN_QUEUE_SIZE)
         self.oldest_recent_event = None
 
         self.mute = 0
@@ -191,7 +192,7 @@ class Game:
 
     def is_game_over(self):
         # snake collides with itself
-        for i in range(3, self.snake.length):
+        for i in range(2, self.snake.length):
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.sfx_game_over()
                 raise "Game Over"
@@ -385,32 +386,52 @@ class Game:
                             self.reset()
 
                     else:
-                        # Add the movement events to the queue, but only if they are valid
-                        if len(self.recent_keydown_events) < 5:
-                            self.recent_keydown_events.append(event.key)
-
-                        if (event.key == K_UP) & (self.snake.direction != 'down') & (not self.change_direction):
-                            self.snake.move_up()
-                            self.change_direction = True
-                        elif (event.key == K_DOWN) & (self.snake.direction != 'up') & (not self.change_direction):
-                            self.snake.move_down()
-                            self.change_direction = True
-                        elif (event.key == K_LEFT) & (self.snake.direction != 'right') & (not self.change_direction):
-                            self.snake.move_left()
-                            self.change_direction = True
-                        elif (event.key == K_RIGHT) & (self.snake.direction != 'left') & (not self.change_direction):
-                            self.snake.move_right()
-                            self.change_direction = True
+                        # Add the movement events to the queue
+                        if len(self.recent_keydown_events) < KEYDOWN_QUEUE_SIZE:
+                            if (event.key == K_UP):
+                                self.recent_keydown_events.append(pygame.key.name(event.key))
+                            elif (event.key == K_DOWN):
+                                self.recent_keydown_events.append(pygame.key.name(event.key))
+                            elif (event.key == K_LEFT):
+                                self.recent_keydown_events.append(pygame.key.name(event.key))
+                            elif (event.key == K_RIGHT):
+                                self.recent_keydown_events.append(pygame.key.name(event.key))
 
                 elif event.type == QUIT:
                     running = False
 
-                # Pop the oldest element once every frame for movement events
-                if self.recent_keydown_events:
-                    self.oldest_recent_event = self.recent_keydown_events.popleft()
 
             try:
-                # print(str(self.oldest_recent_event))
+                # Pop the oldest element once every frame for movement events
+                try:
+                    if self.recent_keydown_events:
+                        self.oldest_recent_event = self.recent_keydown_events.popleft()
+
+                        # if the oldest recent event is same direction, then pop again for a retry
+                        if self.oldest_recent_event == self.snake.direction:
+                            self.oldest_recent_event = self.recent_keydown_events.popleft()
+
+                        # Turn the snake in the new direction popped from the recent keydown queue if not opposite direction
+                        if (self.oldest_recent_event == 'up') & (self.snake.direction != 'down'):
+                            self.snake.move_up()
+                            self.change_direction = True
+                        elif (self.oldest_recent_event == 'down') & (self.snake.direction != 'up'):
+                            self.snake.move_down()
+                            self.change_direction = True
+                        elif (self.oldest_recent_event == 'left') & (self.snake.direction != 'right'):
+                            self.snake.move_left()
+                            self.change_direction = True
+                        elif (self.oldest_recent_event == 'right') & (self.snake.direction != 'left'):
+                            self.snake.move_right()
+                            self.change_direction = True
+                    else:
+                        # Clear the oldest recent event if the queue is empty, and there are no movements in the queue.
+                        self.oldest_recent_event = None
+                except IndexError:
+                    # Exception can be raised if deque is empty when popped, todo: reproduce cause of exception
+                    self.oldest_recent_event = None
+
+                # print(str(self.oldest_recent_event)) # Debugging print movement input
                 if not pause:
                     self.play()
                 elif pause:
