@@ -22,7 +22,6 @@ Maps, Images, and the high score save files are all accessed through the resourc
 # host application online, save a record of high score of all players
 # fix game win crash
 # develop AI snake that can win the game every time in the shortest amount of time possible
-# Implement Multithreading to improve performance. (It seems like game clock slows down randomly)
 # Speed and resource optimization, improve performance when snake is very long
 # Separate scoreboard and score calculation classes
 # Add score multiplier based on map and speed and display multiplier
